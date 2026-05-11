@@ -28,6 +28,15 @@ interface SignUpData {
   app_language: Language;
 }
 
+interface ProfileData {
+  email: string;
+  full_name: string;
+  role: UserRole;
+  native_language: Language;
+  german_proficiency: GermanProficiency;
+  app_language: Language;
+}
+
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -36,9 +45,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
-  async function fetchProfile(userId: string) {
+  async function fetchProfile(userId: string): Promise<Profile | null> {
     const { data } = await supabase
-      .from('profiles')
+      .from('user_profiles')
       .select('*')
       .eq('id', userId)
       .maybeSingle();
@@ -48,6 +57,47 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return data as Profile | null;
   }
 
+  async function ensureProfile(userId: string, data: ProfileData): Promise<Profile | null> {
+    let p = await fetchProfile(userId);
+    if (p) return p;
+
+    const { data: inserted, error } = await supabase
+      .from('user_profiles')
+      .insert({
+        id: userId,
+        full_name: data.full_name,
+        email: data.email,
+        role: data.role,
+        native_language: data.native_language,
+        german_proficiency: data.german_proficiency,
+        app_language: data.app_language,
+      })
+      .select()
+      .maybeSingle();
+
+    if (error) {
+      console.error('Failed to create user profile:', error.message);
+      return null;
+    }
+
+    if (inserted?.app_language) {
+      initLanguageFromProfile(inserted.app_language);
+    }
+    return inserted as Profile | null;
+  }
+
+  function metaToProfileData(user: User): ProfileData {
+    const meta = user.user_metadata ?? {};
+    return {
+      email: user.email ?? '',
+      full_name: meta.full_name ?? '',
+      role: meta.role ?? 'trainee',
+      native_language: meta.native_language ?? 'de',
+      german_proficiency: meta.german_proficiency ?? 'beginner',
+      app_language: meta.app_language ?? 'de',
+    };
+  }
+
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, newSession) => {
@@ -55,7 +105,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(newSession?.user ?? null);
         if (newSession?.user) {
           (async () => {
-            const p = await fetchProfile(newSession.user.id);
+            let p = await fetchProfile(newSession.user.id);
+            if (!p) {
+              p = await ensureProfile(newSession.user.id, metaToProfileData(newSession.user));
+            }
             setProfile(p);
           })();
         } else {
@@ -69,10 +122,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(existingSession);
       setUser(existingSession?.user ?? null);
       if (existingSession?.user) {
-        fetchProfile(existingSession.user.id).then((p) => {
+        (async () => {
+          let p = await fetchProfile(existingSession.user.id);
+          if (!p) {
+            p = await ensureProfile(existingSession.user.id, metaToProfileData(existingSession.user));
+          }
           setProfile(p);
           setLoading(false);
-        });
+        })();
       } else {
         setLoading(false);
       }
@@ -82,7 +139,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   async function signUp(data: SignUpData): Promise<{ error: string | null }> {
-    const { error } = await supabase.auth.signUp({
+    const { data: authData, error } = await supabase.auth.signUp({
       email: data.email,
       password: data.password,
       options: {
@@ -101,6 +158,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (error.message.includes('password')) return { error: 'weak_password' };
       return { error: error.message };
     }
+
+    if (authData.user) {
+      const profileData: ProfileData = {
+        email: data.email,
+        full_name: data.full_name,
+        role: data.role,
+        native_language: data.native_language,
+        german_proficiency: data.german_proficiency,
+        app_language: data.app_language,
+      };
+      const p = await ensureProfile(authData.user.id, profileData);
+      if (p) {
+        setProfile(p);
+        setUser(authData.user);
+        setSession(authData.session);
+      }
+    }
+
     return { error: null };
   }
 

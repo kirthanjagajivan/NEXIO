@@ -14,7 +14,7 @@ export function TrainerDashboard({ onSignOut }: { onSignOut: () => void }) {
   const fetchData = useCallback(async () => {
     setLoading(true);
     const [profilesRes, perfRes] = await Promise.all([
-      supabase.from('profiles').select('*').eq('role', 'trainee').order('created_at', { ascending: false }),
+      supabase.from('user_profiles').select('*').eq('role', 'trainee').order('created_at', { ascending: false }),
       supabase.from('performance').select('*').order('last_attempt_at', { ascending: false }),
     ]);
     setTrainees(profilesRes.data ?? []);
