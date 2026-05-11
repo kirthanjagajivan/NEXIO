@@ -3,10 +3,9 @@ import { TrendingUp, CheckCircle, XCircle, RotateCcw, BookOpen, Award, Target, B
 import { useLanguage } from '../../i18n/LanguageContext';
 import { getPerformanceRecords, clearPerformance } from '../../hooks/usePerformance';
 import type { LessonRecord } from '../../hooks/usePerformance';
-import { LESSON_CONTENT } from '../../data/lessonContent';
+import { supabase } from '../../lib/supabase';
 
 const MAX_SCORE = 50;
-const TOTAL_LESSONS = Object.keys(LESSON_CONTENT).length;
 const HIGH_SCORE_THRESHOLD = 0.75;
 const LOW_SCORE_THRESHOLD = 0.5;
 
@@ -76,13 +75,17 @@ function formatDate(iso: string): string {
 export function PerformanceTab() {
   const { t } = useLanguage();
   const [records, setRecords] = useState<LessonRecord[]>([]);
+  const [totalTopics, setTotalTopics] = useState(0);
 
   useEffect(() => {
-    setRecords(getPerformanceRecords());
+    getPerformanceRecords().then(setRecords);
+    supabase.from('topics').select('id', { count: 'exact', head: true }).then(({ count }) => {
+      setTotalTopics(count ?? 0);
+    });
   }, []);
 
-  function handleClear() {
-    clearPerformance();
+  async function handleClear() {
+    await clearPerformance();
     setRecords([]);
   }
 
@@ -153,7 +156,7 @@ export function PerformanceTab() {
     ? Math.round(records.reduce((s, r) => s + r.score, 0) / records.length)
     : 0;
   const avgPct = Math.round((avgScore / MAX_SCORE) * 100);
-  const completionPct = Math.round((records.length / TOTAL_LESSONS) * 100);
+  const completionPct = Math.round((records.length / totalTopics) * 100);
   const trend = analyzeTrend(records);
   const cfg = FEEDBACK_CONFIG[trend];
 
@@ -198,16 +201,16 @@ export function PerformanceTab() {
         <div className="flex justify-between items-center mt-2.5">
           <p className="text-xs text-gray-400">
             <span className="font-semibold text-gray-600">{records.length}</span> of{' '}
-            <span className="font-semibold text-gray-600">{TOTAL_LESSONS}</span> {t.lessons_completed_of}
+            <span className="font-semibold text-gray-600">{totalTopics}</span> {t.lessons_completed_of}
           </p>
-          {records.length === TOTAL_LESSONS && (
+          {records.length === totalTopics && (
             <span className="text-xs font-semibold text-green-600 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full">
               {t.all_lessons_done}
             </span>
           )}
-          {records.length < TOTAL_LESSONS && (
+          {records.length < totalTopics && (
             <span className="text-xs text-gray-400">
-              {TOTAL_LESSONS - records.length} {t.remaining}
+              {totalTopics - records.length} {t.remaining}
             </span>
           )}
         </div>

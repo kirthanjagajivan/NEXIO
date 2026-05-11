@@ -30,7 +30,7 @@ export function TraineeDashboard({ onSignOut }: { onSignOut: () => void }) {
   const [activeTab, setActiveTab] = useState<TabType>('home');
   const [selectedLesson, setSelectedLesson] = useState<SelectedLesson | null>(null);
   const [testOpen, setTestOpen] = useState(false);
-  const [records, setRecords] = useState<LessonRecord[]>(() => getPerformanceRecords());
+  const [records, setRecords] = useState<LessonRecord[]>([]);
 
   const { chapters, loading, error, fetchAll, getContentForTopic, getAvailableLanguages } = useTraineeData();
 
@@ -38,12 +38,17 @@ export function TraineeDashboard({ onSignOut }: { onSignOut: () => void }) {
     fetchAll();
   }, []);
 
-  const refreshRecords = useCallback(() => {
-    setRecords(getPerformanceRecords());
+  useEffect(() => {
+    refreshRecords();
+  }, []);
+
+  const refreshRecords = useCallback(async () => {
+    const r = await getPerformanceRecords();
+    setRecords(r);
   }, []);
 
   const allTopics = chapters.flatMap((ch) =>
-    ch.topics.map((t) => ({ topicId: t.id, topicTitle: t.title, chapterTitle: ch.title }))
+    ch.topics.map((tp) => ({ topicId: tp.id, topicTitle: tp.title, chapterTitle: ch.title }))
   );
 
   const totalTopics = allTopics.length;
@@ -152,7 +157,7 @@ export function TraineeDashboard({ onSignOut }: { onSignOut: () => void }) {
                   onRepeatLesson={() => { refreshRecords(); setTestOpen(false); }}
                   onNextTopic={() => {
                     refreshRecords();
-                    const idx = allTopics.findIndex((t) => t.topicId === selectedLesson.topicId);
+                    const idx = allTopics.findIndex((tp) => tp.topicId === selectedLesson.topicId);
                     const next = allTopics[idx + 1] ?? null;
                     if (next) {
                       setSelectedLesson(next);

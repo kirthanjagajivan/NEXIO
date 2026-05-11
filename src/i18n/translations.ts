@@ -209,6 +209,40 @@ export interface Translation {
   badge_persistent_desc: string;
   badge_rocket: string;
   badge_rocket_desc: string;
+
+  // Auth
+  login: string;
+  register: string;
+  email: string;
+  password: string;
+  full_name: string;
+  native_language: string;
+  german_proficiency: string;
+  app_language: string;
+  role_label: string;
+  role_trainee: string;
+  role_teacher: string;
+  role_trainer: string;
+  proficiency_beginner: string;
+  proficiency_intermediate: string;
+  proficiency_advanced: string;
+  proficiency_native: string;
+  no_account: string;
+  has_account: string;
+  login_button: string;
+  register_button: string;
+  logging_in: string;
+  registering: string;
+  invalid_credentials: string;
+  email_in_use: string;
+  weak_password: string;
+  required_field: string;
+  trainer: string;
+  trainer_desc: string;
+  welcome_title: string;
+  welcome_subtitle: string;
+
+  of: string;
 }
 
 export const translations: Record<Language, Translation> = {
@@ -427,6 +461,39 @@ export const translations: Record<Language, Translation> = {
     badge_persistent_desc: 'Attempted a lesson 3+ times',
     badge_rocket: 'Rocket Start',
     badge_rocket_desc: 'Scored 90%+ on your first try',
+
+    login: 'Log In',
+    register: 'Create Account',
+    email: 'Email',
+    password: 'Password',
+    full_name: 'Full Name',
+    native_language: 'Native Language',
+    german_proficiency: 'German Proficiency',
+    app_language: 'App Language',
+    role_label: 'Role',
+    role_trainee: 'Trainee',
+    role_teacher: 'Teacher',
+    role_trainer: 'Trainer',
+    proficiency_beginner: 'Beginner',
+    proficiency_intermediate: 'Intermediate',
+    proficiency_advanced: 'Advanced',
+    proficiency_native: 'Native Speaker',
+    no_account: "Don't have an account?",
+    has_account: 'Already have an account?',
+    login_button: 'Log In',
+    register_button: 'Create Account',
+    logging_in: 'Logging in...',
+    registering: 'Creating account...',
+    invalid_credentials: 'Invalid email or password',
+    email_in_use: 'An account with this email already exists',
+    weak_password: 'Password must be at least 6 characters',
+    required_field: 'This field is required',
+    trainer: 'Trainer',
+    trainer_desc: 'Oversee training programs and monitor trainee progress',
+    welcome_title: 'Welcome to the Learning Platform',
+    welcome_subtitle: 'Sign in to continue or create a new account',
+
+    of: 'of',
   },
 
   de: {
@@ -644,6 +711,39 @@ export const translations: Record<Language, Translation> = {
     badge_persistent_desc: 'Eine Lektion 3+ Mal versucht',
     badge_rocket: 'Raketenstart',
     badge_rocket_desc: '90 %+ beim ersten Versuch erreicht',
+
+    login: 'Anmelden',
+    register: 'Konto erstellen',
+    email: 'E-Mail',
+    password: 'Passwort',
+    full_name: 'Vollständiger Name',
+    native_language: 'Muttersprache',
+    german_proficiency: 'Deutschkenntnisse',
+    app_language: 'App-Sprache',
+    role_label: 'Rolle',
+    role_trainee: 'Teilnehmer',
+    role_teacher: 'Lehrer',
+    role_trainer: 'Ausbilder',
+    proficiency_beginner: 'Anfänger',
+    proficiency_intermediate: 'Mittelstufe',
+    proficiency_advanced: 'Fortgeschritten',
+    proficiency_native: 'Muttersprachler',
+    no_account: 'Noch kein Konto?',
+    has_account: 'Bereits ein Konto?',
+    login_button: 'Anmelden',
+    register_button: 'Konto erstellen',
+    logging_in: 'Anmeldung läuft...',
+    registering: 'Konto wird erstellt...',
+    invalid_credentials: 'Ungültige E-Mail oder Passwort',
+    email_in_use: 'Ein Konto mit dieser E-Mail existiert bereits',
+    weak_password: 'Passwort muss mindestens 6 Zeichen lang sein',
+    required_field: 'Dieses Feld ist erforderlich',
+    trainer: 'Ausbilder',
+    trainer_desc: 'Schulungsprogramme überwachen und den Fortschritt der Teilnehmer verfolgen',
+    welcome_title: 'Willkommen auf der Lernplattform',
+    welcome_subtitle: 'Melden Sie sich an oder erstellen Sie ein neues Konto',
+
+    of: 'von',
   },
 
   tr: {
@@ -861,6 +961,39 @@ export const translations: Record<Language, Translation> = {
     badge_persistent_desc: 'Bir dersi 3+ kez denendi',
     badge_rocket: 'Roket Başlangıç',
     badge_rocket_desc: 'İlk denemede %90+ aldınız',
+
+    login: 'Giriş Yap',
+    register: 'Hesap Oluştur',
+    email: 'E-posta',
+    password: 'Şifre',
+    full_name: 'Tam Ad',
+    native_language: 'Ana Dil',
+    german_proficiency: 'Almanca Seviyesi',
+    app_language: 'Uygulama Dili',
+    role_label: 'Rol',
+    role_trainee: 'Antrenör',
+    role_teacher: 'Öğretmen',
+    role_trainer: 'Eğitmen',
+    proficiency_beginner: 'Başlangıç',
+    proficiency_intermediate: 'Orta',
+    proficiency_advanced: 'İleri',
+    proficiency_native: 'Ana Dil',
+    no_account: 'Hesabınız yok mu?',
+    has_account: 'Zaten hesabınız var mı?',
+    login_button: 'Giriş Yap',
+    register_button: 'Hesap Oluştur',
+    logging_in: 'Giriş yapılıyor...',
+    registering: 'Hesap oluşturuluyor...',
+    invalid_credentials: 'Geçersiz e-posta veya şifre',
+    email_in_use: 'Bu e-posta ile zaten bir hesap var',
+    weak_password: 'Şifre en az 6 karakter olmalıdır',
+    required_field: 'Bu alan zorunludur',
+    trainer: 'Eğitmen',
+    trainer_desc: 'Eğitim programlarını denetleyin ve katılımcı ilerlemesini izleyin',
+    welcome_title: 'Öğrenme Platformuna Hoş Geldiniz',
+    welcome_subtitle: 'Devam etmek için giriş yapın veya yeni bir hesap oluşturun',
+
+    of: '/',
   },
 
   ar: {
@@ -1078,6 +1211,39 @@ export const translations: Record<Language, Translation> = {
     badge_persistent_desc: 'حاول درساً 3+ مرات',
     badge_rocket: 'انطلاق صاروخي',
     badge_rocket_desc: 'حصل على 90٪+ في المحاولة الأولى',
+
+    login: 'تسجيل الدخول',
+    register: 'إنشاء حساب',
+    email: 'البريد الإلكتروني',
+    password: 'كلمة المرور',
+    full_name: 'الاسم الكامل',
+    native_language: 'اللغة الأم',
+    german_proficiency: 'مستوى الألمانية',
+    app_language: 'لغة التطبيق',
+    role_label: 'الدور',
+    role_trainee: 'متدرب',
+    role_teacher: 'معلم',
+    role_trainer: 'مدرب',
+    proficiency_beginner: 'مبتدئ',
+    proficiency_intermediate: 'متوسط',
+    proficiency_advanced: 'متقدم',
+    proficiency_native: 'ناطق أصلي',
+    no_account: 'ليس لديك حساب؟',
+    has_account: 'لديك حساب بالفعل؟',
+    login_button: 'تسجيل الدخول',
+    register_button: 'إنشاء حساب',
+    logging_in: 'جارٍ تسجيل الدخول...',
+    registering: 'جارٍ إنشاء الحساب...',
+    invalid_credentials: 'بريد إلكتروني أو كلمة مرور غير صالحة',
+    email_in_use: 'يوجد حساب بهذا البريد الإلكتروني بالفعل',
+    weak_password: 'يجب أن تكون كلمة المرور 6 أحرف على الأقل',
+    required_field: 'هذا الحقل مطلوب',
+    trainer: 'مدرب',
+    trainer_desc: 'الإشراف على برامج التدريب ومتابعة تقدم المتدربين',
+    welcome_title: 'مرحباً بك في منصة التعلم',
+    welcome_subtitle: 'سجل الدخول للمتابعة أو أنشئ حساباً جديداً',
+
+    of: 'من',
   },
 
   ru: {
@@ -1295,6 +1461,39 @@ export const translations: Record<Language, Translation> = {
     badge_persistent_desc: 'Попытался выполнить урок 3+ раза',
     badge_rocket: 'Ракетный старт',
     badge_rocket_desc: 'Набрали 90%+ с первой попытки',
+
+    login: 'Войти',
+    register: 'Создать аккаунт',
+    email: 'Электронная почта',
+    password: 'Пароль',
+    full_name: 'Полное имя',
+    native_language: 'Родной язык',
+    german_proficiency: 'Уровень немецкого',
+    app_language: 'Язык приложения',
+    role_label: 'Роль',
+    role_trainee: 'Стажер',
+    role_teacher: 'Учитель',
+    role_trainer: 'Тренер',
+    proficiency_beginner: 'Начинающий',
+    proficiency_intermediate: 'Средний',
+    proficiency_advanced: 'Продвинутый',
+    proficiency_native: 'Носитель языка',
+    no_account: 'Нет аккаунта?',
+    has_account: 'Уже есть аккаунт?',
+    login_button: 'Войти',
+    register_button: 'Создать аккаунт',
+    logging_in: 'Вход в систему...',
+    registering: 'Создание аккаунта...',
+    invalid_credentials: 'Неверный адрес электронной почты или пароль',
+    email_in_use: 'Аккаунт с этой почтой уже существует',
+    weak_password: 'Пароль должен содержать не менее 6 символов',
+    required_field: 'Это поле обязательно',
+    trainer: 'Тренер',
+    trainer_desc: 'Контролируйте учебные программы и отслеживайте прогресс стажёров',
+    welcome_title: 'Добро пожаловать на обучающую платформу',
+    welcome_subtitle: 'Войдите в систему или создайте новый аккаунт',
+
+    of: 'из',
   },
 };
 

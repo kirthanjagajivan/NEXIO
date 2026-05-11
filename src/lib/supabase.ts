@@ -33,3 +33,29 @@ export interface TopicContent {
   created_at: string;
   updated_at: string;
 }
+
+export interface Profile {
+  id: string;
+  full_name: string;
+  email: string;
+  role: 'trainee' | 'teacher' | 'trainer';
+  native_language: string;
+  german_proficiency: 'beginner' | 'intermediate' | 'advanced' | 'native';
+  app_language: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PerformanceRecord {
+  id: string;
+  user_id: string;
+  topic_id: string;
+  lesson_name: string;
+  score: number;
+  total: number;
+  passed: boolean;
+  attempts: number;
+  last_attempt_at: string;
+  score_history: number[];
+  created_at: string;
+}

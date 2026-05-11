@@ -134,7 +134,7 @@ export function AdminDashboard({ onSignOut }: AdminDashboardProps) {
                     topics={topics}
                     loading={loading}
                     error={error}
-                    onAdd={addChapter}
+                    onAdd={async (title, desc) => { await addChapter(title, desc); }}
                     onUpdate={updateChapter}
                     onDelete={deleteChapter}
                   />
@@ -146,7 +146,7 @@ export function AdminDashboard({ onSignOut }: AdminDashboardProps) {
                     topicContents={topicContents}
                     loading={loading}
                     error={error}
-                    onAdd={addTopic}
+                    onAdd={async (chapterId, title, desc) => { await addTopic(chapterId, title, desc); }}
                     onUpdate={updateTopic}
                     onDelete={deleteTopic}
                   />

@@ -1,27 +1,43 @@
-import { useState } from 'react';
 import { LanguageProvider } from './i18n/LanguageContext';
-import { RoleSelector } from './components/RoleSelector';
+import { AuthProvider, useAuth } from './auth/AuthContext';
+import { AuthPage } from './auth/AuthPage';
 import { TraineeDashboard } from './components/TraineeDashboard';
 import { AdminDashboard } from './components/admin/AdminDashboard';
+import { TrainerDashboard } from './components/admin/TrainerDashboard';
+import { Loader2 } from 'lucide-react';
 
 function AppContent() {
-  const [role, setRole] = useState<'trainee' | 'teacher' | null>(null);
+  const { user, profile, loading, signOut } = useAuth();
 
-  if (!role) {
-    return <RoleSelector onSelectRole={setRole} />;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50">
+        <Loader2 size={32} className="animate-spin text-blue-600" />
+      </div>
+    );
   }
 
-  if (role === 'trainee') {
-    return <TraineeDashboard onSignOut={() => setRole(null)} />;
+  if (!user || !profile) {
+    return <AuthPage />;
   }
 
-  return <AdminDashboard onSignOut={() => setRole(null)} />;
+  if (profile.role === 'trainee') {
+    return <TraineeDashboard onSignOut={signOut} />;
+  }
+
+  if (profile.role === 'trainer') {
+    return <TrainerDashboard onSignOut={signOut} />;
+  }
+
+  return <AdminDashboard onSignOut={signOut} />;
 }
 
 function App() {
   return (
     <LanguageProvider>
-      <AppContent />
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
     </LanguageProvider>
   );
 }

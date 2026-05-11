@@ -40,3 +40,10 @@ export function useLanguage(): LanguageContextValue {
   if (!ctx) throw new Error('useLanguage must be used within LanguageProvider');
   return ctx;
 }
+
+export function initLanguageFromProfile(appLanguage: string) {
+  const lang = appLanguage as Language;
+  if (translations[lang]) {
+    localStorage.setItem('app-language', lang);
+  }
+}

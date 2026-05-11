@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Plus, Trash2, FileText, ChevronDown, ChevronUp, Loader2, AlertCircle, FolderOpen, Check, X } from 'lucide-react';
+import { Plus, Trash2, ChevronDown, ChevronUp, Loader2, AlertCircle, FolderOpen, Check, X } from 'lucide-react';
 import { ConfirmModal } from './Modal';
 import { EmptyState } from './ManageChaptersTab';
 import { useLanguage } from '../../i18n/LanguageContext';

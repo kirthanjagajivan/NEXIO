@@ -4,6 +4,7 @@ import {
   RefreshCw, Loader2, Trophy, AlertTriangle, ChevronRight, BookOpen,
 } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
+import type { Translation } from '../i18n/translations';
 import { useGeneratedQuestions } from '../hooks/useGeneratedQuestions';
 import { savePerformance } from '../hooks/usePerformance';
 import { AiExplanation, fetchExplanation } from './AiExplanation';
@@ -317,7 +318,7 @@ interface ResultsViewProps {
   onRepeatLesson?: () => void;
   onNextTopic?: () => void;
   isRTL: boolean;
-  t: Record<string, string>;
+  t: Translation;
 }
 
 function ResultsView({ result, topicTitle, chapterTitle, onBack, onRepeatLesson, onNextTopic, isRTL, t }: ResultsViewProps) {
@@ -460,7 +461,7 @@ function ResultsView({ result, topicTitle, chapterTitle, onBack, onRepeatLesson,
           <div className="ms-auto"><ScoreBadge score={result.fillScore} total={result.fillTotal} /></div>
         </div>
         <div className="p-6 space-y-4">
-          {result.fillQuestions.map((q, qi) => {
+          {result.fillQuestions.map((q) => {
             const given = (result.fillAnswers[q.id] || '').trim();
             const correct = given.toLowerCase() === q.answer.toLowerCase();
             const unanswered = !given;
