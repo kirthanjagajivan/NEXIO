@@ -243,6 +243,43 @@ export interface Translation {
   welcome_subtitle: string;
 
   of: string;
+
+  // Trainer dashboard
+  practical_tasks: string;
+  assigned_trainees: string;
+  performance: string;
+  feedback: string;
+  create_task: string;
+  task_title: string;
+  task_description: string;
+  task_instructions: string;
+  difficulty_level: string;
+  estimated_duration: string;
+  minutes: string;
+  edit_task: string;
+  delete_task: string;
+  no_tasks: string;
+  trainee_list: string;
+  assign_trainee: string;
+  unassign_trainee: string;
+  assigned_count: string;
+  progress: string;
+  avg_score: string;
+  lessons_completed: string;
+  add_feedback: string;
+  feedback_text: string;
+  rating: string;
+  topic: string;
+  no_feedback: string;
+  view_submissions: string;
+  submit_task: string;
+  submission_status: string;
+  pending: string;
+  submitted: string;
+  reviewed: string;
+  beginner: string;
+  intermediate: string;
+  advanced: string;
 }
 
 export const translations: Record<Language, Translation> = {
@@ -494,6 +531,42 @@ export const translations: Record<Language, Translation> = {
     welcome_subtitle: 'Sign in to continue or create a new account',
 
     of: 'of',
+
+    practical_tasks: 'Practical Tasks',
+    assigned_trainees: 'Assigned Trainees',
+    performance: 'Performance',
+    feedback: 'Feedback',
+    create_task: 'Create Task',
+    task_title: 'Task Title',
+    task_description: 'Description',
+    task_instructions: 'Instructions',
+    difficulty_level: 'Difficulty Level',
+    estimated_duration: 'Estimated Duration',
+    minutes: 'minutes',
+    edit_task: 'Edit',
+    delete_task: 'Delete',
+    no_tasks: 'No tasks yet',
+    trainee_list: 'Trainee List',
+    assign_trainee: 'Assign Trainee',
+    unassign_trainee: 'Unassign',
+    assigned_count: 'Assigned',
+    progress: 'Progress',
+    avg_score: 'Avg Score',
+    lessons_completed: 'Lessons Completed',
+    add_feedback: 'Add Feedback',
+    feedback_text: 'Feedback',
+    rating: 'Rating',
+    topic: 'Topic',
+    no_feedback: 'No feedback yet',
+    view_submissions: 'View Submissions',
+    submit_task: 'Submit Task',
+    submission_status: 'Status',
+    pending: 'Pending',
+    submitted: 'Submitted',
+    reviewed: 'Reviewed',
+    beginner: 'Beginner',
+    intermediate: 'Intermediate',
+    advanced: 'Advanced',
   },
 
   de: {
