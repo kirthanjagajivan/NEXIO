@@ -280,6 +280,24 @@ export interface Translation {
   beginner: string;
   intermediate: string;
   advanced: string;
+
+  // Trainer specific
+  manage_practical_tasks: string;
+  create_first_task: string;
+  manage_trainees: string;
+  assign_first_trainee: string;
+  no_trainees: string;
+  trainee_performance: string;
+  no_data: string;
+  across_trainees: string;
+  active_trainees: string;
+  assigned_to_you: string;
+  trainee_progress: string;
+  manage_feedback: string;
+  assign_trainee_first: string;
+  no_feedback_yet: string;
+  recent_tasks: string;
+  recent_feedback: string;
 }
 
 export const translations: Record<Language, Translation> = {
@@ -534,8 +552,6 @@ export const translations: Record<Language, Translation> = {
 
     practical_tasks: 'Practical Tasks',
     assigned_trainees: 'Assigned Trainees',
-    performance: 'Performance',
-    feedback: 'Feedback',
     create_task: 'Create Task',
     task_title: 'Task Title',
     task_description: 'Description',
@@ -549,11 +565,6 @@ export const translations: Record<Language, Translation> = {
     trainee_list: 'Trainee List',
     assign_trainee: 'Assign Trainee',
     unassign_trainee: 'Unassign',
-    assigned_count: 'Assigned',
-    progress: 'Progress',
-    avg_score: 'Avg Score',
-    lessons_completed: 'Lessons Completed',
-    add_feedback: 'Add Feedback',
     feedback_text: 'Feedback',
     rating: 'Rating',
     topic: 'Topic',
@@ -564,9 +575,22 @@ export const translations: Record<Language, Translation> = {
     pending: 'Pending',
     submitted: 'Submitted',
     reviewed: 'Reviewed',
-    beginner: 'Beginner',
-    intermediate: 'Intermediate',
-    advanced: 'Advanced',
+    manage_practical_tasks: 'Create and manage practical tasks for trainees',
+    create_first_task: 'Create your first practical task to get started',
+    manage_trainees: 'View and manage your assigned trainees',
+    assign_first_trainee: 'Assign your first trainee to get started',
+    no_trainees: 'No trainees assigned yet',
+    trainee_performance: 'Monitor your trainees\' learning progress',
+    no_data: 'No data available',
+    across_trainees: 'Across all trainees',
+    active_trainees: 'Active Trainees',
+    assigned_to_you: 'Assigned to you',
+    trainee_progress: 'Trainee Progress',
+    manage_feedback: 'Give feedback to your trainees',
+    assign_trainee_first: 'Assign a trainee first to add feedback',
+    no_feedback_yet: 'No feedback given yet',
+    recent_tasks: 'Recent Tasks',
+    recent_feedback: 'Recent Feedback',
   },
 
   de: {

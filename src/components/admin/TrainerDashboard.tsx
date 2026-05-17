@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { GraduationCap, RefreshCw, LogOut, BookOpen, Users, TrendingUp, MessageSquare, Plus } from 'lucide-react';
+import { GraduationCap, RefreshCw, LogOut, BookOpen, Users, TrendingUp, MessageSquare, Plus, LayoutDashboard } from 'lucide-react';
 import { LanguageSelector } from '../LanguageSelector';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { supabase } from '../../lib/supabase';
@@ -158,6 +158,3 @@ export function TrainerDashboard({ onSignOut }: { onSignOut: () => void }) {
     </div>
   );
 }
-
-// Import icon at the top
-import { LayoutDashboard } from 'lucide-react';
