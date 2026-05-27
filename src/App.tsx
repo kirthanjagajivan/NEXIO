@@ -2,7 +2,7 @@ import { LanguageProvider } from './i18n/LanguageContext';
 import { AuthProvider, useAuth } from './auth/AuthContext';
 import { AuthPage } from './auth/AuthPage';
 import { TraineeDashboard } from './components/TraineeDashboard';
-import { AdminDashboard } from './components/admin/AdminDashboard';
+import { TeacherDashboard } from './components/admin/TeacherDashboard';
 import { TrainerDashboard } from './components/admin/TrainerDashboard';
 import { Loader2 } from 'lucide-react';
 
@@ -29,7 +29,11 @@ function AppContent() {
     return <TrainerDashboard onSignOut={signOut} />;
   }
 
-  return <AdminDashboard onSignOut={signOut} />;
+  if (profile.role === 'teacher') {
+    return <TeacherDashboard onSignOut={signOut} />;
+  }
+
+  return <TeacherDashboard onSignOut={signOut} />;
 }
 
 function App() {

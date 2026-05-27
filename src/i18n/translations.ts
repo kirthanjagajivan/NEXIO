@@ -298,6 +298,14 @@ export interface Translation {
   no_feedback_yet: string;
   recent_tasks: string;
   recent_feedback: string;
+  recent_activity: string;
+  weak_topics: string;
+  all_topics_passed: string;
+  overall_performance: string;
+  passed: string;
+  attempts: string;
+  optional: string;
+  search: string;
 }
 
 export const translations: Record<Language, Translation> = {
@@ -591,6 +599,14 @@ export const translations: Record<Language, Translation> = {
     no_feedback_yet: 'No feedback given yet',
     recent_tasks: 'Recent Tasks',
     recent_feedback: 'Recent Feedback',
+    recent_activity: 'Recent Activity',
+    weak_topics: 'Weak Topics',
+    all_topics_passed: 'All topics passed!',
+    overall_performance: 'Overall Performance',
+    passed: 'Passed',
+    attempts: 'Attempts',
+    optional: 'optional',
+    search: 'Search',
   },
 
   de: {
