@@ -1,12 +1,13 @@
 # NEXIO – AI Training Dashboard
 
-NEXIO is an AI-powered application developed to support intelligent workflow and training management through an interactive dashboard platform.
+NEXIO is an AI-powered educational dashboard application designed to support intelligent training workflows, automated question generation, answer explanation, and multilingual content interaction.
 
 ## Features
+- AI-based question generation
+- automated answer explanation
+- multilingual content translation
+- backend cloud integration
 - interactive dashboard workflows
-- AI-assisted application functionality
-- backend integration
-- modern responsive interface
 
 ## Tech Stack
 - TypeScript
@@ -14,6 +15,7 @@ NEXIO is an AI-powered application developed to support intelligent workflow and
 - Supabase
 - PostgreSQL
 - Tailwind CSS
+- Edge Functions
 
 ## My Contribution
-I worked on application customization, interface implementation, workflow integration, debugging, and feature refinement.
+I worked on application customization, AI workflow integration, backend function implementation, debugging, feature refinement, and frontend interaction design.
