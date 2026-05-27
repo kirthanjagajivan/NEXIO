@@ -306,6 +306,21 @@ export interface Translation {
   attempts: string;
   optional: string;
   search: string;
+  teacher_learning: string;
+  trainer_tasks: string;
+  academic_learning: string;
+  academic_learning_desc: string;
+  practical_training: string;
+  practical_training_desc: string;
+  academic_progress: string;
+  practical_progress: string;
+  passed_lessons: string;
+  passed_tasks: string;
+  weak_tasks: string;
+  all_tasks_passed: string;
+  tasks_completed: string;
+  academic_performance_desc: string;
+  practical_performance_desc: string;
 }
 
 export const translations: Record<Language, Translation> = {
@@ -607,6 +622,21 @@ export const translations: Record<Language, Translation> = {
     attempts: 'Attempts',
     optional: 'optional',
     search: 'Search',
+    teacher_learning: 'Teacher Learning',
+    trainer_tasks: 'Trainer Tasks',
+    academic_learning: 'Academic Learning',
+    academic_learning_desc: 'Theory lessons, quizzes, and teacher-uploaded content',
+    practical_training: 'Practical Training',
+    practical_training_desc: 'Workplace tasks, assignments, and company training content',
+    academic_progress: 'Academic Progress',
+    practical_progress: 'Practical Progress',
+    passed_lessons: 'Passed Lessons',
+    passed_tasks: 'Passed Tasks',
+    weak_tasks: 'Weak Tasks',
+    all_tasks_passed: 'All tasks passed!',
+    tasks_completed: 'Tasks Completed',
+    academic_performance_desc: 'Monitor student academic progress and quiz scores',
+    practical_performance_desc: 'Monitor trainee practical task performance and workplace assignments',
   },
 
   de: {

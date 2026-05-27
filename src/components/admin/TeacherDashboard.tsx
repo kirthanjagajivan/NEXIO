@@ -10,6 +10,7 @@ import {
   TrendingUp,
   BarChart3,
   Users,
+  ClipboardCheck,
 } from 'lucide-react';
 import { LanguageSelector } from '../LanguageSelector';
 import { useLanguage } from '../../i18n/LanguageContext';
@@ -17,7 +18,7 @@ import { useAdminData } from './useAdminData';
 import { ManageChaptersTab } from './ManageChaptersTab';
 import { ManageTopicsTab } from './ManageTopicsTab';
 import { UploadContentTab } from './UploadContentTab';
-import { PerformanceMonitorTab } from '../shared/PerformanceMonitorTab';
+import { AcademicPerformanceTab } from '../shared/AcademicPerformanceTab';
 import { supabase } from '../../lib/supabase';
 
 type TeacherTab = 'dashboard' | 'lessons' | 'chapters' | 'performance' | 'analytics';
@@ -203,9 +204,9 @@ export function TeacherDashboard({ onSignOut }: { onSignOut: () => void }) {
             )}
 
             {activeTab === 'performance' && (
-              <PerformanceMonitorTab
+              <AcademicPerformanceTab
                 title={t.performance}
-                subtitle={t.trainee_performance}
+                subtitle={t.academic_performance_desc || 'Monitor student academic progress and quiz scores'}
               />
             )}
 

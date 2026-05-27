@@ -3,7 +3,7 @@ import { GraduationCap, RefreshCw, LogOut, BookOpen, Users, TrendingUp, MessageS
 import { LanguageSelector } from '../LanguageSelector';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { supabase } from '../../lib/supabase';
-import { PerformanceMonitorTab } from '../shared/PerformanceMonitorTab';
+import { PracticalPerformanceTab } from '../shared/PracticalPerformanceTab';
 import type { Profile } from '../../lib/supabase';
 
 type TrainerTab = 'dashboard' | 'tasks' | 'trainees' | 'performance' | 'feedback';
@@ -161,10 +161,10 @@ export function TrainerDashboard({ onSignOut }: { onSignOut: () => void }) {
               />
             )}
             {activeTab === 'performance' && (
-              <PerformanceMonitorTab
+              <PracticalPerformanceTab
                 traineeIds={traineeIds}
                 title={t.performance}
-                subtitle={t.trainee_performance}
+                subtitle={t.practical_performance_desc || 'Monitor trainee practical task performance and workplace assignments'}
               />
             )}
             {activeTab === 'feedback' && <TrainerFeedbackTab trainees={trainees} />}
