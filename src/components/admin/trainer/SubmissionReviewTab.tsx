@@ -44,6 +44,7 @@ export function SubmissionReviewTab() {
   const [reviewing, setReviewing] = useState<Submission | null>(null);
   const [reviewData, setReviewData] = useState({ status: 'approved' as SubmissionStatus, score: '', feedback: '' });
   const [saving, setSaving] = useState(false);
+  const [reviewError, setReviewError] = useState<string | null>(null);
 
   useEffect(() => { fetchSubmissions(); }, []);
 
@@ -119,26 +120,38 @@ export function SubmissionReviewTab() {
   const handleReview = async () => {
     if (!reviewing) return;
     setSaving(true);
+    setReviewError(null);
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      const score = reviewData.score !== '' ? parseInt(reviewData.score) : null;
+      if (!user) throw new Error('Not authenticated');
 
-      const { error } = await supabase
+      const score = reviewData.score !== '' ? parseInt(reviewData.score, 10) : null;
+
+      // Include task_id in the filter so the RLS USING clause (which joins to
+      // practical_tasks on task_id) can resolve ownership correctly.
+      const { data: updated, error } = await supabase
         .from('task_submissions')
         .update({
           status: reviewData.status,
           score,
           feedback: reviewData.feedback.trim() || null,
           reviewed_at: new Date().toISOString(),
-          reviewed_by: user?.id ?? null,
+          reviewed_by: user.id,
         })
-        .eq('id', reviewing.id);
+        .eq('id', reviewing.id)
+        .eq('task_id', reviewing.task_id)
+        .select('id');
 
       if (error) throw error;
+      if (!updated || updated.length === 0) {
+        throw new Error('Review could not be saved — you may not have permission to review this submission.');
+      }
+
       await fetchSubmissions();
       setReviewing(null);
     } catch (e: any) {
       console.error('handleReview error:', e);
+      setReviewError(e?.message ?? 'Failed to save review. Please try again.');
     } finally {
       setSaving(false);
     }
@@ -146,8 +159,11 @@ export function SubmissionReviewTab() {
 
   const openReview = (sub: Submission) => {
     setReviewing(sub);
+    setReviewError(null);
     setReviewData({
-      status: 'approved',
+      status: sub.status === 'approved' || sub.status === 'rejected' || sub.status === 'needs_revision'
+        ? sub.status
+        : 'approved',
       score: sub.score?.toString() ?? '',
       feedback: sub.feedback ?? '',
     });
@@ -245,7 +261,8 @@ export function SubmissionReviewTab() {
           reviewData={reviewData}
           setReviewData={setReviewData}
           saving={saving}
-          onClose={() => setReviewing(null)}
+          error={reviewError}
+          onClose={() => { setReviewing(null); setReviewError(null); }}
           onSubmit={handleReview}
         />
       )}
@@ -364,12 +381,13 @@ function SubmissionCard({
 }
 
 function ReviewModal({
-  submission, reviewData, setReviewData, saving, onClose, onSubmit,
+  submission, reviewData, setReviewData, saving, error, onClose, onSubmit,
 }: {
   submission: Submission;
   reviewData: { status: SubmissionStatus; score: string; feedback: string };
   setReviewData: React.Dispatch<React.SetStateAction<{ status: SubmissionStatus; score: string; feedback: string }>>;
   saving: boolean;
+  error: string | null;
   onClose: () => void;
   onSubmit: () => void;
 }) {
@@ -452,6 +470,13 @@ function ReviewModal({
             />
           </div>
         </div>
+
+        {error && (
+          <div className="mx-6 mb-3 flex items-start gap-2 px-3 py-2.5 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+            <AlertCircle size={15} className="shrink-0 mt-0.5" />
+            {error}
+          </div>
+        )}
 
         <div className="flex gap-3 px-6 py-4 border-t border-gray-200">
           <button
