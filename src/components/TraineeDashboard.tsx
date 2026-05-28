@@ -1,18 +1,19 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { LanguageSelector } from './LanguageSelector';
 import { HomeTab } from './tabs/HomeTab';
 import { LessonsTab } from './tabs/LessonsTab';
-import { PerformanceTab } from './tabs/PerformanceTab';
 import { ProfileTab } from './tabs/ProfileTab';
 import { LessonDetail } from './LessonDetail';
 import { TestPage } from './TestPage';
+import { TeacherLearningAnalytics } from './tabs/TeacherLearningAnalytics';
+import { TrainerTaskAnalytics } from './tabs/TrainerTaskAnalytics';
 import { useLanguage } from '../i18n/LanguageContext';
 import { useTraineeData } from '../hooks/useTraineeData';
 import { getPerformanceRecords, type LessonRecord } from '../hooks/usePerformance';
-import { LayoutDashboard, BookOpen, TrendingUp, User, LogOut, Briefcase, GraduationCap, BarChart3 } from 'lucide-react';
+import { LayoutDashboard, User, LogOut, Briefcase, GraduationCap, BookOpen, BarChart2 } from 'lucide-react';
 import { TrainerTasksTab } from './tabs/TrainerTasksTab';
 
-type TabType = 'home' | 'teacher_learning' | 'trainer_tasks' | 'progress' | 'profile';
+type TabType = 'home' | 'teacher_learning' | 'trainer_tasks' | 'teacher_analytics' | 'trainer_analytics' | 'profile';
 
 interface Tab {
   id: TabType;
@@ -40,12 +41,7 @@ export function TraineeDashboard({ onSignOut }: { onSignOut: () => void }) {
   }, []);
 
   useEffect(() => {
-    refreshRecords();
-  }, []);
-
-  const refreshRecords = useCallback(async () => {
-    const r = await getPerformanceRecords();
-    setRecords(r);
+    getPerformanceRecords().then(setRecords);
   }, []);
 
   const allTopics = chapters.flatMap((ch) =>
@@ -58,7 +54,8 @@ export function TraineeDashboard({ onSignOut }: { onSignOut: () => void }) {
     { id: 'home', label: t.home, icon: <LayoutDashboard size={18} /> },
     { id: 'teacher_learning', label: t.teacher_learning, icon: <GraduationCap size={18} /> },
     { id: 'trainer_tasks', label: t.trainer_tasks, icon: <Briefcase size={18} /> },
-    { id: 'progress', label: t.overall_progress, icon: <BarChart3 size={18} /> },
+    { id: 'teacher_analytics', label: 'Lesson Analytics', icon: <BookOpen size={18} /> },
+    { id: 'trainer_analytics', label: 'Task Analytics', icon: <BarChart2 size={18} /> },
     { id: 'profile', label: t.profile, icon: <User size={18} /> },
   ];
 
@@ -149,9 +146,9 @@ export function TraineeDashboard({ onSignOut }: { onSignOut: () => void }) {
                 <TrainerTasksTab />
               )}
 
-              {activeTab === 'progress' && (
-                <OverallProgressTab records={records} onRefresh={refreshRecords} />
-              )}
+              {activeTab === 'teacher_analytics' && <TeacherLearningAnalytics />}
+
+              {activeTab === 'trainer_analytics' && <TrainerTaskAnalytics />}
 
               {activeTab === 'profile' && <ProfileTab />}
             </div>
@@ -183,138 +180,3 @@ export function TraineeDashboard({ onSignOut }: { onSignOut: () => void }) {
   );
 }
 
-import { supabase } from '../lib/supabase';
-import { Loader2, Clock, XCircle } from 'lucide-react';
-
-function OverallProgressTab({ records, onRefresh }: { records: LessonRecord[]; onRefresh: () => void }) {
-  const { t } = useLanguage();
-  const [practicalRecords, setPracticalRecords] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchPracticalRecords();
-  }, []);
-
-  const fetchPracticalRecords = async () => {
-    setLoading(true);
-    try {
-      const userId = (await supabase.auth.getUser()).data.user?.id;
-      if (!userId) return;
-
-      const { data, error } = await supabase
-        .from('practical_performance')
-        .select('*')
-        .eq('user_id', userId)
-        .order('last_attempt_at', { ascending: false });
-
-      if (error) throw error;
-      setPracticalRecords(data || []);
-    } catch (e) {
-      console.error('Failed to fetch practical records:', e);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const teacherPassed = records.filter(r => r.passed).length;
-  const teacherTotal = records.length;
-  const teacherAvg = records.length > 0
-    ? Math.round(records.reduce((sum, r) => sum + (r.score / r.total) * 100, 0) / records.length)
-    : 0;
-
-  const practicalPassed = practicalRecords.filter(r => r.passed).length;
-  const practicalTotal = practicalRecords.length;
-  const practicalAvg = practicalRecords.length > 0
-    ? Math.round(practicalRecords.reduce((sum, r) => sum + (r.score / r.total) * 100, 0) / practicalRecords.length)
-    : 0;
-
-  const overallProgress = Math.round(((teacherPassed + practicalPassed) / Math.max(1, (teacherTotal + practicalTotal))) * 100);
-
-  return (
-    <div className="space-y-5">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-bold text-gray-900">{t.overall_progress}</h2>
-        <button
-          onClick={() => { onRefresh(); fetchPracticalRecords(); }}
-          className="flex items-center gap-1 text-xs px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors text-gray-700"
-        >
-          <Clock size={14} />
-          {t.refresh_data}
-        </button>
-      </div>
-
-      <div className="bg-gradient-to-r from-blue-50 to-emerald-50 rounded-xl p-5 border border-gray-200">
-        <div className="flex items-center justify-between mb-3">
-          <span className="font-semibold text-gray-700">{t.overall_progress}</span>
-          <span className="text-3xl font-bold text-gray-900">{overallProgress}%</span>
-        </div>
-        <div className="w-full bg-gray-200 rounded-full h-3">
-          <div
-            className="bg-gradient-to-r from-blue-500 to-emerald-500 h-3 rounded-full transition-all"
-            style={{ width: `${overallProgress}%` }}
-          />
-        </div>
-        <p className="text-xs text-gray-500 mt-2">
-          {teacherPassed + practicalPassed} of {teacherTotal + practicalTotal} completed
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-200">
-          <div className="flex items-center gap-2 mb-3">
-            <GraduationCap size={18} className="text-emerald-600" />
-            <h3 className="font-semibold text-emerald-900">{t.teacher_learning}</h3>
-          </div>
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm">
-              <span className="text-emerald-700">{t.passed_lessons}</span>
-              <span className="font-bold text-emerald-900">{teacherPassed}/{teacherTotal}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-emerald-700">{t.avg_score}</span>
-              <span className={`font-bold ${teacherAvg >= 70 ? 'text-green-600' : 'text-amber-600'}`}>
-                {teacherAvg}%
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-amber-50 rounded-xl p-4 border border-amber-200">
-          <div className="flex items-center gap-2 mb-3">
-            <Briefcase size={18} className="text-amber-600" />
-            <h3 className="font-semibold text-amber-900">{t.trainer_tasks}</h3>
-          </div>
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm">
-              <span className="text-amber-700">{t.tasks_completed}</span>
-              <span className="font-bold text-amber-900">{practicalPassed}/{practicalTotal}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-amber-700">{t.avg_score}</span>
-              <span className={`font-bold ${practicalAvg >= 70 ? 'text-green-600' : 'text-amber-600'}`}>
-                {practicalAvg}%
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {records.filter(r => !r.passed).length > 0 && (
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <h3 className="font-semibold text-gray-800 text-sm mb-3 flex items-center gap-2">
-            <XCircle size={14} className="text-red-500" />
-            {t.weak_areas}
-          </h3>
-          <div className="space-y-2">
-            {records.filter(r => !r.passed).slice(0, 5).map((r) => (
-              <div key={r.id} className="flex items-center justify-between text-xs">
-                <span className="text-gray-700">{r.lesson_name}</span>
-                <span className="text-red-600 font-medium">{Math.round((r.score / r.total) * 100)}%</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
