@@ -95,7 +95,9 @@ export function LessonDetail({
   const [contentLang, setContentLang] = useState<Language>('en');
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const content = getContent(contentLang);
+  // Try selected language, fall back to English so content is never hidden when it exists.
+  const rawContent = getContent(contentLang);
+  const content = rawContent || (contentLang !== 'en' ? getContent('en') : '');
   const isContentRTL = RTL_LANGUAGES.includes(contentLang);
   const selectedLang = LANGUAGES.find((l) => l.code === contentLang)!;
   const sections = content ? parseContentIntoSections(content) : [];

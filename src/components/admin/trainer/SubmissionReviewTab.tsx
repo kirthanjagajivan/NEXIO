@@ -126,25 +126,70 @@ export function SubmissionReviewTab() {
       if (!user) throw new Error('Not authenticated');
 
       const score = reviewData.score !== '' ? parseInt(reviewData.score, 10) : null;
+      const now = new Date().toISOString();
 
-      // Include task_id in the filter so the RLS USING clause (which joins to
-      // practical_tasks on task_id) can resolve ownership correctly.
-      const { data: updated, error } = await supabase
+      // Update the task submission record
+      const { data: updated, error: subError } = await supabase
         .from('task_submissions')
         .update({
           status: reviewData.status,
           score,
           feedback: reviewData.feedback.trim() || null,
-          reviewed_at: new Date().toISOString(),
+          reviewed_at: now,
           reviewed_by: user.id,
         })
         .eq('id', reviewing.id)
         .eq('task_id', reviewing.task_id)
         .select('id');
 
-      if (error) throw error;
+      if (subError) throw subError;
       if (!updated || updated.length === 0) {
         throw new Error('Review could not be saved — you may not have permission to review this submission.');
+      }
+
+      // Sync practical_performance so the trainee's performance dashboard reflects this review.
+      // Only sync when a numeric score was provided and the status is a terminal decision.
+      if (score !== null && (reviewData.status === 'approved' || reviewData.status === 'rejected')) {
+        const passed = reviewData.status === 'approved';
+        const scoreOutOf100 = Math.min(100, Math.max(0, score));
+
+        const { data: existing } = await supabase
+          .from('practical_performance')
+          .select('id, attempts, score_history')
+          .eq('user_id', reviewing.trainee_id)
+          .eq('task_id', reviewing.task_id)
+          .maybeSingle();
+
+        if (existing) {
+          const prevHistory: number[] = Array.isArray(existing.score_history) ? existing.score_history : [];
+          await supabase
+            .from('practical_performance')
+            .update({
+              score: scoreOutOf100,
+              total: 100,
+              passed,
+              feedback: reviewData.feedback.trim() || null,
+              attempts: existing.attempts + 1,
+              last_attempt_at: now,
+              score_history: [...prevHistory, scoreOutOf100],
+            })
+            .eq('id', existing.id);
+        } else {
+          await supabase
+            .from('practical_performance')
+            .insert({
+              user_id: reviewing.trainee_id,
+              task_id: reviewing.task_id,
+              task_title: reviewing.task_title,
+              score: scoreOutOf100,
+              total: 100,
+              passed,
+              feedback: reviewData.feedback.trim() || null,
+              attempts: 1,
+              last_attempt_at: now,
+              score_history: [scoreOutOf100],
+            });
+        }
       }
 
       await fetchSubmissions();

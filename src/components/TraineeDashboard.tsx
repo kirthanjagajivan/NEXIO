@@ -27,7 +27,7 @@ interface SelectedLesson {
 }
 
 export function TraineeDashboard({ onSignOut }: { onSignOut: () => void }) {
-  const { t, isRTL } = useLanguage();
+  const { t, isRTL, language } = useLanguage();
   const [activeTab, setActiveTab] = useState<TabType>('home');
   const [selectedLesson, setSelectedLesson] = useState<SelectedLesson | null>(null);
   const [testOpen, setTestOpen] = useState(false);
@@ -160,12 +160,24 @@ export function TraineeDashboard({ onSignOut }: { onSignOut: () => void }) {
       </div>
 
       {testOpen && selectedLesson && (
-        <TestPage
-          topicId={selectedLesson.topicId}
-          topicTitle={selectedLesson.topicTitle}
-          onClose={() => setTestOpen(false)}
-          onSubmit={refreshRecords}
-        />
+        <div className="fixed inset-0 z-50 bg-gradient-to-br from-slate-50 to-blue-50 overflow-y-auto">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6">
+            <TestPage
+              topicId={selectedLesson.topicId}
+              topicTitle={selectedLesson.topicTitle}
+              chapterTitle={selectedLesson.chapterTitle}
+              lessonContent={getContentForTopic(selectedLesson.topicId, language)}
+              onBack={() => setTestOpen(false)}
+              onRepeatLesson={() => setTestOpen(false)}
+              onNextTopic={(() => {
+                const idx = allTopics.findIndex((tp) => tp.topicId === selectedLesson.topicId);
+                const next = allTopics[idx + 1];
+                if (next) return () => { setSelectedLesson(next); setTestOpen(false); };
+                return undefined;
+              })()}
+            />
+          </div>
+        </div>
       )}
     </div>
   );
