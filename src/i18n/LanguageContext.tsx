@@ -28,8 +28,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     document.documentElement.lang = language;
   }, [language, isRTL]);
 
+  // Merge over English so any missing key in the selected language falls back gracefully
+  const t: Translation = { ...translations.en, ...translations[language] };
+
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t: translations[language], isRTL }}>
+    <LanguageContext.Provider value={{ language, setLanguage, t, isRTL }}>
       {children}
     </LanguageContext.Provider>
   );
