@@ -138,7 +138,9 @@ export function TraineeDashboard({ onSignOut }: { onSignOut: () => void }) {
                 ) : (
                   <LessonsTab
                     chapters={chapters}
+                    records={records}
                     loading={loading}
+                    error={error}
                     onSelectTopic={handleSelectTopic}
                   />
                 )

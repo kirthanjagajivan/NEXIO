@@ -59,21 +59,21 @@ export function TrainerTasksTab() {
   const fetchData = async () => {
     setLoading(true);
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
+      // RLS handles assignment filtering — just fetch published tasks visible to this trainee
       const { data: tasksData, error: tErr } = await supabase
         .from('practical_tasks')
         .select('*')
-        .eq('is_published', true)
         .order('created_at', { ascending: false });
 
       if (tErr) throw tErr;
 
-      const userId = (await supabase.auth.getUser()).data.user?.id;
-      if (!userId) throw new Error('Not authenticated');
-
       const { data: subsData, error: sErr } = await supabase
         .from('task_submissions')
         .select('*')
-        .eq('trainee_id', userId);
+        .eq('trainee_id', user.id);
 
       if (sErr) throw sErr;
 
