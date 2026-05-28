@@ -1,12 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
-import { GraduationCap, RefreshCw, LogOut, BookOpen, Users, TrendingUp, MessageSquare, LayoutDashboard, Plus, Save, CreditCard as Edit2, Trash2, X } from 'lucide-react';
+import { GraduationCap, RefreshCw, LogOut, BookOpen, Users, TrendingUp, MessageSquare, LayoutDashboard, Plus, Save, CreditCard as Edit2, Trash2, X, ClipboardCheck } from 'lucide-react';
 import { LanguageSelector } from '../LanguageSelector';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { supabase } from '../../lib/supabase';
 import { PracticalPerformanceTab } from '../shared/PracticalPerformanceTab';
+import { PracticalTasksTab } from './trainer/PracticalTasksTab';
+import { SubmissionReviewTab } from './trainer/SubmissionReviewTab';
 import type { Profile } from '../../lib/supabase';
 
-type TrainerTab = 'dashboard' | 'tasks' | 'trainees' | 'performance' | 'feedback';
+type TrainerTab = 'dashboard' | 'tasks' | 'trainees' | 'performance' | 'feedback' | 'reviews';
 
 interface PracticalTask {
   id: string;
@@ -70,6 +72,7 @@ export function TrainerDashboard({ onSignOut }: { onSignOut: () => void }) {
   const tabs: Tab[] = [
     { id: 'dashboard', label: t.dashboard, icon: <LayoutDashboard size={18} /> },
     { id: 'tasks', label: t.practical_tasks, icon: <BookOpen size={18} /> },
+    { id: 'reviews', label: t.review_submissions, icon: <ClipboardCheck size={18} /> },
     { id: 'trainees', label: t.assigned_trainees, icon: <Users size={18} /> },
     { id: 'performance', label: t.performance, icon: <TrendingUp size={18} /> },
     { id: 'feedback', label: t.feedback, icon: <MessageSquare size={18} /> },
@@ -153,6 +156,7 @@ export function TrainerDashboard({ onSignOut }: { onSignOut: () => void }) {
               <TrainerDashboardTab trainees={trainees} loading={loading} />
             )}
             {activeTab === 'tasks' && <PracticalTasksTab />}
+            {activeTab === 'reviews' && <SubmissionReviewTab />}
             {activeTab === 'trainees' && (
               <AssignedTraineesTab
                 trainees={trainees}
@@ -279,324 +283,6 @@ function RecentTraineesCard({ trainees, loading }: { trainees: Profile[]; loadin
           ))}
         </div>
       )}
-    </div>
-  );
-}
-
-function PracticalTasksTab() {
-  const { t } = useLanguage();
-  const [tasks, setTasks] = useState<PracticalTask[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
-  const [editingTask, setEditingTask] = useState<PracticalTask | null>(null);
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    instructions: '',
-    difficulty: 'intermediate',
-    estimated_duration_minutes: 30,
-  });
-  const [saving, setSaving] = useState(false);
-
-  useEffect(() => {
-    fetchTasks();
-  }, []);
-
-  const fetchTasks = async () => {
-    setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from('practical_tasks')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setTasks(data || []);
-    } catch (e) {
-      console.error('Failed to fetch tasks:', e);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSave = async () => {
-    if (!formData.title.trim()) return;
-
-    setSaving(true);
-    try {
-      if (editingTask) {
-        const { error } = await supabase
-          .from('practical_tasks')
-          .update(formData)
-          .eq('id', editingTask.id);
-
-        if (error) throw error;
-      } else {
-        const { error } = await supabase.from('practical_tasks').insert([formData]);
-
-        if (error) throw error;
-      }
-
-      await fetchTasks();
-      setShowModal(false);
-      setEditingTask(null);
-      setFormData({
-        title: '',
-        description: '',
-        instructions: '',
-        difficulty: 'intermediate',
-        estimated_duration_minutes: 30,
-      });
-    } catch (e) {
-      console.error('Failed to save task:', e);
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleDelete = async (taskId: string) => {
-    if (!confirm('Delete this task?')) return;
-
-    try {
-      const { error } = await supabase.from('practical_tasks').delete().eq('id', taskId);
-
-      if (error) throw error;
-      await fetchTasks();
-    } catch (e) {
-      console.error('Failed to delete task:', e);
-    }
-  };
-
-  const openEditModal = (task: PracticalTask) => {
-    setEditingTask(task);
-    setFormData({
-      title: task.title,
-      description: task.description,
-      instructions: task.instructions,
-      difficulty: task.difficulty,
-      estimated_duration_minutes: task.estimated_duration_minutes,
-    });
-    setShowModal(true);
-  };
-
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">{t.practical_tasks}</h1>
-          <p className="text-gray-500 mt-1">{t.manage_practical_tasks}</p>
-        </div>
-        <button
-          onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors font-medium text-sm"
-        >
-          <Plus size={16} />
-          {t.create_task}
-        </button>
-      </div>
-
-      {loading ? (
-        <div className="flex items-center justify-center py-12">
-          <RefreshCw size={24} className="animate-spin text-gray-400" />
-        </div>
-      ) : tasks.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
-          <BookOpen size={48} className="text-gray-300 mx-auto mb-4" />
-          <p className="text-gray-600 font-medium">{t.no_tasks}</p>
-          <p className="text-gray-400 text-sm mt-1">{t.create_first_task}</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {tasks.map((task) => (
-            <div
-              key={task.id}
-              className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md transition-shadow"
-            >
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <h3 className="font-semibold text-gray-900">{task.title}</h3>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {task.difficulty} · {task.estimated_duration_minutes} {t.minutes}
-                  </p>
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => openEditModal(task)}
-                    className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-                  >
-                    <Edit2 size={16} />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(task.id)}
-                    className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              </div>
-              {task.description && (
-                <p className="text-sm text-gray-600 mb-3 line-clamp-2">{task.description}</p>
-              )}
-              {task.instructions && (
-                <div className="mt-3 p-3 bg-gray-50 rounded-lg">
-                  <p className="text-xs font-medium text-gray-500 mb-1">{t.task_instructions}</p>
-                  <p className="text-sm text-gray-700 line-clamp-3">{task.instructions}</p>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-
-      {showModal && (
-        <TaskModal
-          formData={formData}
-          setFormData={setFormData}
-          saving={saving}
-          editing={!!editingTask}
-          onClose={() => {
-            setShowModal(false);
-            setEditingTask(null);
-            setFormData({
-              title: '',
-              description: '',
-              instructions: '',
-              difficulty: 'intermediate',
-              estimated_duration_minutes: 30,
-            });
-          }}
-          onSave={handleSave}
-        />
-      )}
-    </div>
-  );
-}
-
-function TaskModal({
-  formData,
-  setFormData,
-  saving,
-  editing,
-  onClose,
-  onSave,
-}: {
-  formData: any;
-  setFormData: any;
-  saving: boolean;
-  editing: boolean;
-  onClose: () => void;
-  onSave: () => void;
-}) {
-  const { t } = useLanguage();
-
-  return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-gray-900">
-            {editing ? t.edit_task : t.create_task}
-          </h2>
-          <button
-            onClick={onClose}
-            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <X size={20} />
-          </button>
-        </div>
-
-        <div className="p-6 space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{t.task_title}</label>
-            <input
-              type="text"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
-              placeholder="Task title..."
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t.task_description}
-            </label>
-            <textarea
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
-              placeholder="Describe the task..."
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t.task_instructions}
-            </label>
-            <textarea
-              value={formData.instructions}
-              onChange={(e) => setFormData({ ...formData, instructions: e.target.value })}
-              rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
-              placeholder="Optional: company training instructions, resources, etc."
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t.difficulty_level}
-              </label>
-              <select
-                value={formData.difficulty}
-                onChange={(e) => setFormData({ ...formData, difficulty: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
-              >
-                <option value="beginner">{t.beginner}</option>
-                <option value="intermediate">{t.intermediate}</option>
-                <option value="advanced">{t.advanced}</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t.estimated_duration}
-              </label>
-              <input
-                type="number"
-                value={formData.estimated_duration_minutes}
-                onChange={(e) =>
-                  setFormData({ ...formData, estimated_duration_minutes: parseInt(e.target.value) })
-                }
-                min={5}
-                max={480}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="flex gap-3 p-6 border-t border-gray-200">
-          <button
-            onClick={onClose}
-            className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
-          >
-            {t.cancel || 'Cancel'}
-          </button>
-          <button
-            onClick={onSave}
-            disabled={saving || !formData.title.trim()}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
-          >
-            {saving ? (
-              <RefreshCw size={16} className="animate-spin" />
-            ) : (
-              <Save size={16} />
-            )}
-            {saving ? t.saving || 'Saving...' : t.save || 'Save'}
-          </button>
-        </div>
-      </div>
     </div>
   );
 }

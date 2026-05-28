@@ -321,6 +321,24 @@ export interface Translation {
   tasks_completed: string;
   academic_performance_desc: string;
   practical_performance_desc: string;
+  attachments: string;
+  upload_files: string;
+  upload_files_hint: string;
+  review_submissions: string;
+  review_submissions_desc: string;
+  review_submission: string;
+  no_submissions: string;
+  submit_review: string;
+  submission_text: string;
+  trainer_materials: string;
+  trainer_feedback: string;
+  my_submission: string;
+  attach_files: string;
+  submitting: string;
+  resubmit: string;
+  review: string;
+  published: string;
+  draft: string;
 }
 
 export const translations: Record<Language, Translation> = {
@@ -637,6 +655,24 @@ export const translations: Record<Language, Translation> = {
     tasks_completed: 'Tasks Completed',
     academic_performance_desc: 'Monitor student academic progress and quiz scores',
     practical_performance_desc: 'Monitor trainee practical task performance and workplace assignments',
+    attachments: 'Attachments',
+    upload_files: 'Click to upload files',
+    upload_files_hint: 'PDF, Images, Word documents, Text files (max 50 MB each)',
+    review_submissions: 'Submissions',
+    review_submissions_desc: 'Review, approve or reject trainee submissions',
+    review_submission: 'Review Submission',
+    no_submissions: 'No submissions here',
+    submit_review: 'Submit Review',
+    submission_text: 'Your Response',
+    trainer_materials: 'Trainer Materials',
+    trainer_feedback: 'Trainer Feedback',
+    my_submission: 'My Submission',
+    attach_files: 'Attach files (PDF, images, documents)',
+    submitting: 'Submitting…',
+    resubmit: 'Resubmit',
+    review: 'Review',
+    published: 'Published — visible to trainees',
+    draft: 'Draft — hidden from trainees',
   },
 
   de: {
