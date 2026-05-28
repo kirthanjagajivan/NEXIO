@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import {
   Briefcase, ChevronDown, ChevronUp, Upload, Loader2,
   CheckCircle, Clock, XCircle, RotateCcw, Send, X,
-  FileText, Image as ImageIcon, File as FileIcon, Star,
+  FileText, Image as ImageIcon, File as FileIcon, Star, AlertCircle,
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useLanguage } from '../../i18n/LanguageContext';
@@ -321,6 +321,7 @@ function SubmitModal({
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [uploadStep, setUploadStep] = useState('');
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -332,25 +333,24 @@ function SubmitModal({
   const handleSubmit = async () => {
     if (!text.trim() && files.length === 0) return;
     setUploading(true);
+    setSubmitError(null);
     try {
-      const userId = (await supabase.auth.getUser()).data.user?.id;
-      if (!userId) throw new Error('Not authenticated');
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
 
-      // Upload files
+      // Upload files first
       const uploaded: FileAttachment[] = [];
       for (const file of files) {
         setUploadStep(`Uploading ${file.name}…`);
-        const att = await uploadSubmissionFile(file, userId, task.id);
+        const att = await uploadSubmissionFile(file, user.id, task.id);
         uploaded.push(att);
       }
 
       setUploadStep('Saving submission…');
 
       if (existingSubmission) {
-        const mergedAttachments = [
-          ...(existingSubmission.attachments ?? []),
-          ...uploaded,
-        ];
+        // Update existing submission
+        const mergedAttachments = [...(existingSubmission.attachments ?? []), ...uploaded];
         const { error } = await supabase
           .from('task_submissions')
           .update({
@@ -362,21 +362,27 @@ function SubmitModal({
           .eq('id', existingSubmission.id);
         if (error) throw error;
       } else {
+        // Use upsert to handle the UNIQUE(task_id, trainee_id) constraint gracefully
         const { error } = await supabase
           .from('task_submissions')
-          .insert([{
-            task_id: task.id,
-            trainee_id: userId,
-            submission_text: text,
-            attachments: uploaded,
-            status: 'submitted',
-          }]);
+          .upsert(
+            [{
+              task_id: task.id,
+              trainee_id: user.id,
+              submission_text: text,
+              attachments: uploaded,
+              status: 'submitted',
+              updated_at: new Date().toISOString(),
+            }],
+            { onConflict: 'task_id,trainee_id' }
+          );
         if (error) throw error;
       }
 
       onSuccess();
     } catch (e: any) {
-      console.error(e);
+      console.error('Submit error:', e);
+      setSubmitError(e?.message ?? 'Failed to submit. Please try again.');
     } finally {
       setUploading(false);
       setUploadStep('');
@@ -457,6 +463,13 @@ function SubmitModal({
             />
           </div>
         </div>
+
+        {submitError && (
+          <div className="mx-6 mb-1 px-3 py-2.5 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm flex items-center gap-2">
+            <XCircle size={14} className="shrink-0" />
+            {submitError}
+          </div>
+        )}
 
         <div className="flex gap-3 px-6 py-4 border-t border-gray-200 shrink-0">
           {uploadStep && (
