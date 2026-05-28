@@ -127,13 +127,12 @@ export function TraineeDashboard({ onSignOut }: { onSignOut: () => void }) {
               {activeTab === 'teacher_learning' && (
                 selectedLesson ? (
                   <LessonDetail
-                    topicId={selectedLesson.topicId}
                     topicTitle={selectedLesson.topicTitle}
                     chapterTitle={selectedLesson.chapterTitle}
                     onBack={() => setSelectedLesson(null)}
-                    onOpenTest={() => setTestOpen(true)}
-                    getContentForTopic={getContentForTopic}
-                    getAvailableLanguages={getAvailableLanguages}
+                    onStartTest={() => setTestOpen(true)}
+                    getContent={(lang) => getContentForTopic(selectedLesson.topicId, lang)}
+                    availableLanguages={getAvailableLanguages(selectedLesson.topicId)}
                   />
                 ) : (
                   <LessonsTab

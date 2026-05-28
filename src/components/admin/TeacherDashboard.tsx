@@ -21,7 +21,7 @@ import { UploadContentTab } from './UploadContentTab';
 import { AcademicPerformanceTab } from '../shared/AcademicPerformanceTab';
 import { supabase } from '../../lib/supabase';
 
-type TeacherTab = 'dashboard' | 'lessons' | 'chapters' | 'performance' | 'analytics';
+type TeacherTab = 'dashboard' | 'lessons' | 'chapters' | 'content' | 'performance' | 'analytics';
 
 interface Tab {
   id: TeacherTab;
@@ -83,12 +83,9 @@ export function TeacherDashboard({ onSignOut }: { onSignOut: () => void }) {
 
   const tabs: Tab[] = [
     { id: 'dashboard', label: t.dashboard, icon: <LayoutDashboard size={18} /> },
-    {
-      id: 'lessons',
-      label: t.lessons,
-      icon: <BookOpen size={18} />,
-    },
+    { id: 'lessons', label: t.lessons, icon: <BookOpen size={18} /> },
     { id: 'chapters', label: t.chapters_stat, icon: <FileText size={18} /> },
+    { id: 'content', label: t.upload_content || 'Upload Content', icon: <Upload size={18} /> },
     { id: 'performance', label: t.performance, icon: <TrendingUp size={18} /> },
     { id: 'analytics', label: t.analytics || 'Analytics', icon: <BarChart3 size={18} /> },
   ];
@@ -178,6 +175,7 @@ export function TeacherDashboard({ onSignOut }: { onSignOut: () => void }) {
                 topics={topics.length}
                 contents={topicContents.length}
                 traineeStats={traineeStats}
+                onNavigate={setActiveTab}
               />
             )}
 
@@ -185,10 +183,12 @@ export function TeacherDashboard({ onSignOut }: { onSignOut: () => void }) {
               <ManageTopicsTab
                 chapters={chapters}
                 topics={topics}
+                topicContents={topicContents}
                 loading={dataLoading}
-                addTopic={addTopic}
-                updateTopic={updateTopic}
-                deleteTopic={deleteTopic}
+                error={error}
+                onAdd={addTopic}
+                onUpdate={updateTopic}
+                onDelete={deleteTopic}
               />
             )}
 
@@ -197,9 +197,20 @@ export function TeacherDashboard({ onSignOut }: { onSignOut: () => void }) {
                 chapters={chapters}
                 topics={topics}
                 loading={dataLoading}
-                addChapter={addChapter}
-                updateChapter={updateChapter}
-                deleteChapter={deleteChapter}
+                error={error}
+                onAdd={addChapter}
+                onUpdate={updateChapter}
+                onDelete={deleteChapter}
+              />
+            )}
+
+            {activeTab === 'content' && (
+              <UploadContentTab
+                chapters={chapters}
+                topics={topics}
+                topicContents={topicContents}
+                loading={dataLoading}
+                onSave={upsertContent}
               />
             )}
 
@@ -225,11 +236,13 @@ function TeacherDashboardOverview({
   topics,
   contents,
   traineeStats,
+  onNavigate,
 }: {
   chapters: number;
   topics: number;
   contents: number;
   traineeStats: TraineeStats;
+  onNavigate: (tab: TeacherTab) => void;
 }) {
   const { t } = useLanguage();
 
@@ -289,14 +302,14 @@ function TeacherDashboardOverview({
           </div>
           <div className="p-6 space-y-3">
             <button
-              onClick={() => window.dispatchEvent(new CustomEvent('goto-tab', { detail: 'lessons' }))}
+              onClick={() => onNavigate('lessons')}
               className="w-full flex items-center gap-3 px-4 py-3 bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 transition-colors"
             >
               <FileText size={18} />
               <span className="font-medium">{t.manage_topics}</span>
             </button>
             <button
-              onClick={() => window.dispatchEvent(new CustomEvent('goto-tab', { detail: 'content' }))}
+              onClick={() => onNavigate('content')}
               className="w-full flex items-center gap-3 px-4 py-3 bg-amber-50 text-amber-700 rounded-lg hover:bg-amber-100 transition-colors"
             >
               <Upload size={18} />
