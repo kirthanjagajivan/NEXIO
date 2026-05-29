@@ -6,70 +6,60 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
-const LANGUAGE_NAMES: Record<string, string> = {
-  en: "English",
-  de: "German",
-  tr: "Turkish",
-  ar: "Arabic",
-  ru: "Russian",
+const CEFR_LABELS: Record<string, string> = {
+  beginner:     "A1/A2",
+  intermediate: "B1/B2",
+  advanced:     "C1",
+  native:       "C2",
 };
 
-// Map app proficiency values to CEFR levels and concrete guidance
-const PROFICIENCY_CONFIG: Record<string, {
-  cefrLabel: string;
-  guidanceLesson: string;
-  guidanceNative: string;
-}> = {
-  beginner: {
-    cefrLabel: "A1/A2 (Beginner)",
-    guidanceLesson:
-      "Use extremely simple vocabulary. Avoid technical jargon. Write short sentences (max 12 words each). " +
-      "Use everyday analogies. Define any term you use. This student is at A1/A2 level.",
-    guidanceNative:
-      "Translate into simple, everyday language. Short sentences. No jargon.",
-  },
-  intermediate: {
-    cefrLabel: "B1/B2 (Intermediate)",
-    guidanceLesson:
-      "Use clear, moderately simple vocabulary. You may use the technical term itself once it is explained. " +
-      "Sentences can be slightly longer but stay concise. This student is at B1/B2 level.",
-    guidanceNative:
-      "Translate naturally. Keep it accessible; avoid overly academic phrasing.",
-  },
-  advanced: {
-    cefrLabel: "C1 (Advanced)",
-    guidanceLesson:
-      "You may use technical vocabulary and domain-specific language freely. " +
-      "Provide a precise, detailed explanation. The student is at C1 level and can handle complexity.",
-    guidanceNative:
-      "Translate accurately with full technical detail preserved.",
-  },
-  native: {
-    cefrLabel: "C2/Native",
-    guidanceLesson:
-      "Provide a concise, expert-level definition. Assume full command of the language and domain. " +
-      "No need to simplify. The student is a native/near-native speaker.",
-    guidanceNative:
-      "Translate with full precision. The student understands complex sentence structures.",
-  },
-};
+function splitSentences(text: string): string[] {
+  return text
+    .replace(/\s+/g, " ")
+    .split(/(?<=[.!?])\s+/)
+    .map((s) => s.trim())
+    .filter((s) => s.length > 15);
+}
 
-function extractText(result: unknown): string {
-  if (typeof result === "string") return result.trim();
-  if (result && typeof result === "object") {
-    const obj = result as Record<string, unknown>;
-    if (Array.isArray(obj.choices) && obj.choices[0]) {
-      const choice = obj.choices[0] as Record<string, unknown>;
-      if (choice.message && typeof choice.message === "object") {
-        const msg = choice.message as Record<string, unknown>;
-        return String(msg.content ?? "").trim();
-      }
-      if (typeof choice.text === "string") return choice.text.trim();
-    }
-    if (typeof obj.text === "string") return obj.text.trim();
-    if (typeof obj.content === "string") return obj.content.trim();
+function findTermSentences(lessonContent: string, term: string): string[] {
+  const lower = term.toLowerCase();
+  return splitSentences(lessonContent).filter((s) =>
+    s.toLowerCase().includes(lower)
+  );
+}
+
+function truncateSentence(sentence: string, maxWords: number): string {
+  const words = sentence.split(/\s+/);
+  if (words.length <= maxWords) return sentence;
+  return words.slice(0, maxWords).join(" ") + "…";
+}
+
+function buildLessonLangExplanation(
+  term: string,
+  termSentences: string[],
+  proficiency: string,
+): string {
+  if (termSentences.length === 0) {
+    return `"${term}" is a key term in this lesson. Read the surrounding text carefully for context.`;
   }
-  return "";
+
+  const sorted = [...termSentences].sort((a, b) => a.length - b.length);
+  const primary = sorted[0];
+
+  switch (proficiency) {
+    case "beginner":
+      return truncateSentence(primary, 20);
+    case "intermediate":
+      if (sorted.length >= 2) {
+        return truncateSentence(primary, 35) + " " + truncateSentence(sorted[1], 30);
+      }
+      return truncateSentence(primary, 40);
+    case "advanced":
+    case "native":
+      return termSentences.slice(0, 3).join(" ");
+    default:
+      return truncateSentence(primary, 35);
+  }
 }
 
 Deno.serve(async (req: Request) => {
@@ -78,96 +68,38 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const { term, lessonContent, lessonLang, studentLang, germanProficiency } = await req.json();
+    const body = await req.json();
+    const term: string = (body.term ?? "").trim();
+    const lessonContent: string = (body.lessonContent ?? "").trim();
+    const lessonLang: string = body.lessonLang ?? "en";
+    const studentLang: string = body.studentLang ?? "en";
+    const germanProficiency: string = body.germanProficiency ?? "intermediate";
 
     if (!term || !lessonContent) {
       return new Response(
-        JSON.stringify({ error: "Missing required fields" }),
+        JSON.stringify({ error: "Missing required fields: term and lessonContent" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    const lessonLangName = LANGUAGE_NAMES[lessonLang] ?? "English";
-    const studentLangName = LANGUAGE_NAMES[studentLang] ?? "English";
-    const isSameLang = lessonLang === studentLang;
+    const cefrLabel = CEFR_LABELS[germanProficiency] ?? "B1/B2";
+    const termSentences = findTermSentences(lessonContent, term);
+    const lessonLangExplanation = buildLessonLangExplanation(term, termSentences, germanProficiency);
 
-    // Proficiency config — default to intermediate if not provided
-    const profConfig = PROFICIENCY_CONFIG[germanProficiency ?? "intermediate"] ?? PROFICIENCY_CONFIG.intermediate;
+    // Pick an example sentence different from the one used as the main explanation
+    const sorted = [...termSentences].sort((a, b) => a.length - b.length);
+    const primary = sorted[0];
+    const exampleSentence = termSentences.find((s) => s !== primary) ?? null;
 
-    // Build a concise excerpt around the term for context
-    const termIndex = lessonContent.toLowerCase().indexOf(term.toLowerCase());
-    const start = Math.max(0, termIndex - 300);
-    const end = Math.min(lessonContent.length, termIndex + 600);
-    const excerpt = lessonContent.slice(start, end).trim();
-
-    const prompt = `You are a technical vocabulary assistant adapting explanations to a student's language level.
-
-LESSON EXCERPT (the term appears in this text):
-"""
-${excerpt}
-"""
-
-TERM TO EXPLAIN: "${term}"
-LESSON LANGUAGE: ${lessonLangName}
-STUDENT'S NATIVE LANGUAGE: ${studentLangName}
-STUDENT'S GERMAN PROFICIENCY: ${profConfig.cefrLabel}
-
-INSTRUCTIONS FOR THE ${lessonLangName.toUpperCase()} EXPLANATION (lesson_lang_explanation):
-- Base it ONLY on the lesson excerpt above.
-- ${profConfig.guidanceLesson}
-- Maximum 3 sentences.
-
-INSTRUCTIONS FOR THE ${studentLangName.toUpperCase()} EXPLANATION (student_lang_explanation):
-${isSameLang
-  ? `- The lesson language and the student's native language are both ${lessonLangName}. Set student_lang_explanation to the same text as lesson_lang_explanation.`
-  : `- Translate the ${lessonLangName} explanation into ${studentLangName}.
-- ${profConfig.guidanceNative}
-- Preserve the meaning exactly.`
-}
-
-OUTPUT RULES:
-- Output ONLY valid JSON. No markdown, no code fences, no extra text.
-- Both fields must be non-empty strings.
-
-REQUIRED FORMAT:
-{"lesson_lang_explanation":"<explanation in ${lessonLangName}>","student_lang_explanation":"<explanation in ${studentLangName}>"}`;
-
-    const session = new Supabase.ai.Session("llama3.1-8b");
-    const result = await session.run(prompt, {
-      max_tokens: 450,
-      stream: false,
-    }) as unknown;
-
-    const raw = extractText(result);
-
-    const jsonMatch = raw.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-      try {
-        const parsed = JSON.parse(jsonMatch[0]) as Record<string, unknown>;
-        const lessonExp = String(parsed.lesson_lang_explanation ?? "").trim();
-        const studentExp = String(parsed.student_lang_explanation ?? "").trim();
-
-        if (lessonExp) {
-          return new Response(
-            JSON.stringify({
-              lesson_lang_explanation: lessonExp,
-              student_lang_explanation: studentExp || lessonExp,
-              cefr_level: profConfig.cefrLabel,
-            }),
-            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
-      } catch {
-        // fall through to fallback
-      }
-    }
-
-    const fallback = raw.slice(0, 300) || `"${term}" is a technical term used in this lesson. Please refer to the lesson content for its meaning.`;
     return new Response(
       JSON.stringify({
-        lesson_lang_explanation: fallback,
-        student_lang_explanation: fallback,
-        cefr_level: profConfig.cefrLabel,
+        lesson_lang_explanation: lessonLangExplanation,
+        student_lang_explanation: lessonLangExplanation,
+        example_sentence: exampleSentence,
+        cefr_level: cefrLabel,
+        lessonLang,
+        studentLang,
+        isSameLang: lessonLang === studentLang,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
