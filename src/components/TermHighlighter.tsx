@@ -468,6 +468,3 @@ export function TermHighlighter({
     </>
   );
 }
-
-
-export { TermHighlighter }
