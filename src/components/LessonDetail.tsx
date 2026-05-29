@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ArrowLeft, ChevronDown } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
 import type { Language } from '../i18n/translations';
+import { TermHighlighter } from './TermHighlighter';
 
 const LANGUAGES: { code: Language; label: string; nativeLabel: string }[] = [
   { code: 'en', label: 'English', nativeLabel: 'English' },
@@ -91,7 +92,7 @@ export function LessonDetail({
   onBack,
   onStartTest,
 }: LessonDetailProps) {
-  const { t, isRTL: appRTL } = useLanguage();
+  const { t, isRTL: appRTL, language } = useLanguage();
   const [contentLang, setContentLang] = useState<Language>('en');
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -177,13 +178,14 @@ export function LessonDetail({
                   ) : null}
                   <div className="space-y-4">
                     {section.paragraphs.map((para, pi) => (
-                      <p
+                      <TermHighlighter
                         key={pi}
-                        className="text-gray-700 text-[15px] sm:text-base leading-[1.75] tracking-[0.01em]"
-                        style={{ textAlign: isContentRTL ? 'right' : 'left' }}
-                      >
-                        {para}
-                      </p>
+                        text={para}
+                        lessonContent={content}
+                        lessonLang={contentLang}
+                        studentLang={language}
+                        rtl={isContentRTL}
+                      />
                     ))}
                   </div>
                 </div>
