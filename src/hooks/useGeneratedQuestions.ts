@@ -22,7 +22,7 @@ export interface GeneratedQuestions {
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-const STOP_WORDS = new Set([
+const STOP_WORDS_EN = new Set([
   'the', 'and', 'that', 'this', 'with', 'from', 'they', 'have', 'been',
   'used', 'also', 'into', 'their', 'which', 'between', 'other', 'each',
   'some', 'such', 'where', 'when', 'what', 'both', 'more', 'than', 'for',
@@ -30,13 +30,44 @@ const STOP_WORDS = new Set([
   'would', 'could', 'should', 'these', 'those', 'then', 'than', 'about',
 ]);
 
-function extractContentTerms(text: string): string[] {
+const STOP_WORDS_DE = new Set([
+  'der', 'die', 'das', 'und', 'oder', 'aber', 'mit', 'von', 'zu', 'für',
+  'bei', 'aus', 'nach', 'über', 'unter', 'durch', 'an', 'auf', 'in', 'ist',
+  'sind', 'war', 'waren', 'hat', 'haben', 'wird', 'werden', 'kann', 'können',
+  'muss', 'müssen', 'ein', 'eine', 'einen', 'dem', 'den', 'des', 'sich',
+  'auch', 'noch', 'als', 'wenn', 'dann', 'dieser', 'diese', 'dieses',
+  'welche', 'welcher', 'dass', 'nicht', 'mehr', 'sehr', 'beim', 'damit',
+  'dazu', 'wie', 'alle', 'dabei', 'sowohl', 'bereits', 'hierbei', 'darf',
+]);
+
+type Lang = 'de' | 'en' | 'other';
+
+function detectLanguage(text: string): Lang {
+  const lower = text.toLowerCase();
+  const sample = lower.slice(0, 2000);
+
+  const deMarkers = ['der ', 'die ', 'das ', 'und ', 'ist ', 'sind ', 'wird ', 'nicht ', 'auch ', 'eine ', 'einen ', 'haben ', 'können ', 'werden '];
+  const enMarkers = ['the ', 'and ', 'that ', 'this ', 'with ', 'from ', 'they ', 'have ', 'been ', 'also ', 'which ', 'some ', 'would ', 'could '];
+
+  const deScore = deMarkers.filter((m) => sample.includes(m)).length;
+  const enScore = enMarkers.filter((m) => sample.includes(m)).length;
+  const hasUmlauts = /[äöüßÄÖÜ]/.test(text);
+  const adjustedDe = deScore + (hasUmlauts ? 5 : 0);
+
+  if (adjustedDe > enScore) return 'de';
+  if (enScore > adjustedDe) return 'en';
+  return 'other';
+}
+
+// Unicode-aware: preserves ä/ö/ü/ß and other non-ASCII letters
+function extractContentTerms(text: string, lang: Lang): string[] {
+  const stopWords = lang === 'de' ? STOP_WORDS_DE : STOP_WORDS_EN;
+  const cleaned = text.replace(/[^\p{L}\p{N}\s]/gu, ' ');
   return [...new Set(
-    text
-      .replace(/[^a-zA-Z\s]/g, ' ')
+    cleaned
       .split(/\s+/)
       .map((w) => w.trim())
-      .filter((w) => w.length > 4 && !STOP_WORDS.has(w.toLowerCase()))
+      .filter((w) => w.length > 3 && !stopWords.has(w.toLowerCase()))
   )];
 }
 
@@ -49,15 +80,16 @@ function extractContentSentences(text: string): string[] {
 }
 
 function buildClientFallback(lessonContent: string, _topicTitle: string): GeneratedQuestions {
+  const lang = detectLanguage(lessonContent);
   const sentences = extractContentSentences(lessonContent);
-  const terms = extractContentTerms(lessonContent);
+  const terms = extractContentTerms(lessonContent, lang);
 
   const mcq: MCQQuestion[] = [];
   const fillBlank: FillBlankQuestion[] = [];
 
-  sentences.slice(0, 8).forEach((sentence) => {
+  sentences.slice(0, 10).forEach((sentence) => {
     if (mcq.length >= 5) return;
-    const sentenceTerms = extractContentTerms(sentence);
+    const sentenceTerms = extractContentTerms(sentence, lang);
     if (sentenceTerms.length < 1) return;
 
     const correctTerm = sentenceTerms[0];
@@ -66,18 +98,22 @@ function buildClientFallback(lessonContent: string, _topicTitle: string): Genera
       .slice(0, 3);
     if (distractors.length < 3) return;
 
-    const blanked = sentence.replace(new RegExp(`\\b${correctTerm}\\b`, 'i'), '___');
+    // Use indexOf instead of \b regex — word boundaries don't work for umlauts
+    const idx = sentence.toLowerCase().indexOf(correctTerm.toLowerCase());
+    if (idx < 0) return;
+    const blanked = sentence.slice(0, idx) + '___' + sentence.slice(idx + correctTerm.length);
     if (!blanked.includes('___')) return;
 
     const options = [correctTerm, ...distractors].sort(() => 0.5 - Math.random());
     const correct = options.findIndex((o) => o.toLowerCase() === correctTerm.toLowerCase());
 
-    mcq.push({ id: `mcq-${mcq.length + 1}`, question: `Fill in the blank: "${blanked}"`, options, correct });
+    const prefix = lang === 'de' ? 'Füllen Sie die Lücke aus:' : 'Fill in the blank:';
+    mcq.push({ id: `mcq-${mcq.length + 1}`, question: `${prefix} "${blanked}"`, options, correct });
   });
 
-  sentences.slice(0, 8).forEach((sentence) => {
+  sentences.slice(0, 10).forEach((sentence) => {
     if (fillBlank.length >= 5) return;
-    const sentenceTerms = extractContentTerms(sentence);
+    const sentenceTerms = extractContentTerms(sentence, lang);
     const term = sentenceTerms.find((t) => t.length > 3);
     if (!term) return;
 
@@ -88,7 +124,8 @@ function buildClientFallback(lessonContent: string, _topicTitle: string): Genera
     const after = sentence.slice(idx + term.length).trim();
     if (!before || !after) return;
 
-    fillBlank.push({ id: `fb-${fillBlank.length + 1}`, before, after, answer: term });
+    // Preserve original casing from the sentence
+    fillBlank.push({ id: `fb-${fillBlank.length + 1}`, before, after, answer: sentence.slice(idx, idx + term.length) });
   });
 
   return { mcq, fillBlank };
