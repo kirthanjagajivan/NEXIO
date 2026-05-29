@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ArrowLeft, ChevronDown } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
+import { useAuth } from '../auth/AuthContext';
 import type { Language } from '../i18n/translations';
 import { TermHighlighter } from './TermHighlighter';
 
@@ -93,6 +94,8 @@ export function LessonDetail({
   onStartTest,
 }: LessonDetailProps) {
   const { t, isRTL: appRTL, language } = useLanguage();
+  const { profile } = useAuth();
+  const germanProficiency = profile?.german_proficiency ?? 'intermediate';
   const [contentLang, setContentLang] = useState<Language>('en');
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -184,6 +187,7 @@ export function LessonDetail({
                         lessonContent={content}
                         lessonLang={contentLang}
                         studentLang={language}
+                        germanProficiency={germanProficiency}
                         rtl={isContentRTL}
                       />
                     ))}

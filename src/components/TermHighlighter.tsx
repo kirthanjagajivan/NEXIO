@@ -143,9 +143,12 @@ function segmentParagraph(
 
 // ─── Popup component ──────────────────────────────────────────────────────────
 
+type GermanProficiency = 'beginner' | 'intermediate' | 'advanced' | 'native';
+
 interface ExplanationData {
   lesson_lang_explanation: string;
   student_lang_explanation: string;
+  cefr_level?: string;
 }
 
 interface TermPopupProps {
@@ -154,6 +157,7 @@ interface TermPopupProps {
   lessonContent: string;
   lessonLang: Language;
   studentLang: Language;
+  germanProficiency: GermanProficiency;
   onClose: () => void;
 }
 
@@ -165,7 +169,14 @@ const LANG_LABELS: Record<Language, string> = {
   ru: 'Русский',
 };
 
-function TermPopup({ term, anchor, lessonContent, lessonLang, studentLang, onClose }: TermPopupProps) {
+const CEFR_BADGE_COLORS: Record<string, string> = {
+  beginner:     'bg-green-100 text-green-700 border-green-200',
+  intermediate: 'bg-blue-100 text-blue-700 border-blue-200',
+  advanced:     'bg-amber-100 text-amber-700 border-amber-200',
+  native:       'bg-gray-100 text-gray-700 border-gray-200',
+};
+
+function TermPopup({ term, anchor, lessonContent, lessonLang, studentLang, germanProficiency, onClose }: TermPopupProps) {
   const [data, setData] = useState<ExplanationData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -185,7 +196,7 @@ function TermPopup({ term, anchor, lessonContent, lessonLang, studentLang, onClo
         'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
         'Apikey': SUPABASE_ANON_KEY,
       },
-      body: JSON.stringify({ term, lessonContent, lessonLang, studentLang }),
+      body: JSON.stringify({ term, lessonContent, lessonLang, studentLang, germanProficiency }),
     })
       .then((r) => r.json())
       .then((d: ExplanationData) => {
@@ -229,17 +240,29 @@ function TermPopup({ term, anchor, lessonContent, lessonLang, studentLang, onClo
       aria-modal="true"
     >
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Sparkles size={14} className="text-blue-100" />
-          <span className="text-white font-bold text-sm truncate max-w-[200px]">{term}</span>
+      <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-4 py-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 min-w-0">
+            <Sparkles size={14} className="text-blue-100 shrink-0" />
+            <span className="text-white font-bold text-sm truncate max-w-[200px]">{term}</span>
+          </div>
+          <button
+            onClick={onClose}
+            className="text-white/70 hover:text-white transition-colors rounded-full hover:bg-white/20 p-0.5 shrink-0 ml-2"
+          >
+            <X size={15} />
+          </button>
         </div>
-        <button
-          onClick={onClose}
-          className="text-white/70 hover:text-white transition-colors rounded-full hover:bg-white/20 p-0.5"
-        >
-          <X size={15} />
-        </button>
+        {/* CEFR level badge */}
+        <div className="mt-2">
+          <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full border ${CEFR_BADGE_COLORS[germanProficiency]} bg-opacity-90`}>
+            {data?.cefr_level ?? (
+              germanProficiency === 'beginner' ? 'A1/A2' :
+              germanProficiency === 'intermediate' ? 'B1/B2' :
+              germanProficiency === 'advanced' ? 'C1' : 'C2'
+            )}
+          </span>
+        </div>
       </div>
 
       {/* Body */}
@@ -316,6 +339,7 @@ interface TermHighlighterProps {
   lessonContent: string;
   lessonLang: Language;
   studentLang: Language;
+  germanProficiency: GermanProficiency;
   rtl?: boolean;
   className?: string;
 }
@@ -330,6 +354,7 @@ export function TermHighlighter({
   lessonContent,
   lessonLang,
   studentLang,
+  germanProficiency,
   rtl = false,
   className = '',
 }: TermHighlighterProps) {
@@ -378,6 +403,7 @@ export function TermHighlighter({
           lessonContent={lessonContent}
           lessonLang={lessonLang}
           studentLang={studentLang}
+          germanProficiency={germanProficiency}
           onClose={handleClose}
         />
       )}
