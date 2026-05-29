@@ -1,6 +1,13 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Sparkles, X, BookOpen, Globe, Quote } from 'lucide-react';
+import { Sparkles, X, BookOpen, Globe, Quote, HelpCircle } from 'lucide-react';
 import type { Language } from '../i18n/translations';
+import {
+  lookupTerm,
+  getDefinition,
+  getTranslation,
+  normalizeTerm,
+} from '../data/termVocabulary';
+import type { GermanProficiency, AppLanguage } from '../data/termVocabulary';
 
 // ─── Stop-word sets ───────────────────────────────────────────────────────────
 
@@ -120,15 +127,7 @@ function segmentParagraph(
   return segments;
 }
 
-// ─── Client-side explanation engine ──────────────────────────────────────────
-
-type GermanProficiency = 'beginner' | 'intermediate' | 'advanced' | 'native';
-
-interface ExplanationResult {
-  lessonLangText: string;
-  exampleSentence: string | null;
-  cefrLabel: string;
-}
+// ─── Explanation engine ───────────────────────────────────────────────────────
 
 const CEFR_LABEL: Record<GermanProficiency, string> = {
   beginner:     'A1/A2',
@@ -137,88 +136,108 @@ const CEFR_LABEL: Record<GermanProficiency, string> = {
   native:       'C2',
 };
 
-// Split text into clean sentences
-function splitSentences(text: string): string[] {
-  return text
+interface ExplanationResult {
+  // Explanation in the lesson language
+  lessonLangText: string;
+  // Explanation in the student's native language (null = use lessonLangText)
+  nativeLangText: string | null;
+  // Example sentence (from vocabulary or extracted from lesson content)
+  exampleSentence: string | null;
+  cefrLabel: string;
+  // True when the explanation comes from the curated vocabulary
+  fromVocabulary: boolean;
+}
+
+// Find a sentence in the lesson content that contains the term — used as fallback example
+function findExampleFromLesson(lessonContent: string, term: string): string | null {
+  const lower = term.toLowerCase();
+  const sentences = lessonContent
     .replace(/\s+/g, ' ')
     .split(/(?<=[.!?])\s+/)
     .map((s) => s.trim())
-    .filter((s) => s.length > 15);
+    .filter((s) => s.length > 20 && s.toLowerCase().includes(lower));
+
+  if (sentences.length === 0) return null;
+  // Prefer a sentence that isn't the same as the definition (pick the longer one if there are two)
+  return sentences.sort((a, b) => b.length - a.length)[0] ?? null;
 }
 
-// Find all sentences in lessonContent that contain the term
-function findTermSentences(lessonContent: string, term: string): string[] {
-  const lower = term.toLowerCase();
-  return splitSentences(lessonContent).filter((s) =>
-    s.toLowerCase().includes(lower)
-  );
-}
-
-// Truncate a sentence to a max word count, appending "…" if cut
-function truncateSentence(sentence: string, maxWords: number): string {
-  const words = sentence.split(/\s+/);
-  if (words.length <= maxWords) return sentence;
-  return words.slice(0, maxWords).join(' ') + '…';
-}
-
-// Build a proficiency-adapted explanation entirely from lesson content
+// Build the explanation for a clicked term
 function buildExplanation(
-  term: string,
+  clickedTerm: string,
   lessonContent: string,
+  lessonLang: Language,
+  studentLang: Language,
   proficiency: GermanProficiency,
 ): ExplanationResult {
   const cefrLabel = CEFR_LABEL[proficiency];
-  const termSentences = findTermSentences(lessonContent, term);
+  const entry = lookupTerm(clickedTerm);
 
-  if (termSentences.length === 0) {
-    // Term detected in paragraph but not found in full lesson — rare edge case
+  if (entry) {
+    // ── Vocabulary hit ────────────────────────────────────────────────────
+    const lessonLangText = getDefinition(entry, proficiency);
+
+    // Native language: use vocabulary translation if available and langs differ
+    let nativeLangText: string | null = null;
+    if (lessonLang !== studentLang) {
+      const t = getTranslation(entry, studentLang as AppLanguage, proficiency);
+      nativeLangText = t?.definition ?? null;
+    }
+
+    // Example: prefer vocabulary example, fall back to lesson sentence
+    const vocabExample = entry.example;
+    const lessonExample = findExampleFromLesson(lessonContent, clickedTerm);
+    const exampleSentence = lessonExample ?? vocabExample;
+
+    return { lessonLangText, nativeLangText, exampleSentence, cefrLabel, fromVocabulary: true };
+  }
+
+  // ── Lesson-content fallback ───────────────────────────────────────────────
+  // Extract contextual sentences from the lesson when the term isn't in the dictionary.
+  const lower = clickedTerm.toLowerCase();
+  const allSentences = lessonContent
+    .replace(/\s+/g, ' ')
+    .split(/(?<=[.!?])\s+/)
+    .map((s) => s.trim())
+    .filter((s) => s.length > 20 && s.toLowerCase().includes(lower));
+
+  if (allSentences.length === 0) {
     return {
-      lessonLangText: `"${term}" is a key term in this lesson. Read the surrounding text carefully for its meaning.`,
+      lessonLangText: `"${clickedTerm}" is a key term in this lesson. Refer to the surrounding text for context.`,
+      nativeLangText: null,
       exampleSentence: null,
       cefrLabel,
+      fromVocabulary: false,
     };
   }
 
-  // Pick the best "definition" sentence: prefer shorter, earlier sentences
-  const sorted = [...termSentences].sort((a, b) => a.length - b.length);
-  const definitionSentence = sorted[0];
-
-  // Pick a different sentence as the example if available
-  const exampleSentence =
-    termSentences.length > 1
-      ? termSentences.find((s) => s !== definitionSentence) ?? null
-      : null;
+  const sorted = [...allSentences].sort((a, b) => a.length - b.length);
+  const primary = sorted[0];
+  const example = allSentences.find((s) => s !== primary) ?? null;
 
   let lessonLangText: string;
+  const words = (s: string, n: number) => s.split(/\s+/).slice(0, n).join(' ') + (s.split(/\s+/).length > n ? '…' : '');
 
   switch (proficiency) {
     case 'beginner':
-      // A1/A2: single short sentence, truncate aggressively
-      lessonLangText = truncateSentence(definitionSentence, 20);
+      lessonLangText = words(primary, 20);
       break;
-
     case 'intermediate':
-      // B1/B2: up to two sentences, moderate length
-      if (termSentences.length >= 2) {
-        lessonLangText =
-          truncateSentence(definitionSentence, 35) +
-          ' ' +
-          truncateSentence(sorted[1] ?? termSentences[1], 30);
-      } else {
-        lessonLangText = truncateSentence(definitionSentence, 40);
-      }
+      lessonLangText = allSentences.length >= 2
+        ? words(primary, 35) + ' ' + words(sorted[1], 30)
+        : words(primary, 40);
       break;
-
-    case 'advanced':
-    case 'native':
-      // C1/C2: up to three sentences, full detail
-      lessonLangText = termSentences
-        .slice(0, 3)
-        .join(' ');
-      break;
+    default:
+      lessonLangText = allSentences.slice(0, 3).join(' ');
   }
 
-  return { lessonLangText, exampleSentence, cefrLabel };
+  return {
+    lessonLangText,
+    nativeLangText: null,
+    exampleSentence: example,
+    cefrLabel,
+    fromVocabulary: false,
+  };
 }
 
 // ─── Popup ────────────────────────────────────────────────────────────────────
@@ -243,27 +262,33 @@ const LANG_LABELS: Record<Language, string> = {
 
 const CEFR_BADGE_COLORS: Record<GermanProficiency, string> = {
   beginner:     'bg-green-100 text-green-700 border-green-200',
-  intermediate: 'bg-blue-100 text-blue-700 border-blue-200',
+  intermediate: 'bg-sky-100 text-sky-700 border-sky-200',
   advanced:     'bg-amber-100 text-amber-700 border-amber-200',
   native:       'bg-gray-100 text-gray-700 border-gray-200',
 };
 
-// Highlight the term inside a sentence string for display
-function highlightTerm(sentence: string, term: string): { before: string; match: string; after: string } | null {
-  const idx = sentence.toLowerCase().indexOf(term.toLowerCase());
-  if (idx < 0) return null;
+function highlightTerm(
+  sentence: string,
+  term: string,
+): { before: string; match: string; after: string } | null {
+  const idx = sentence.toLowerCase().indexOf(normalizeTerm(term).replace(/-/g, ' ').toLowerCase());
+  const directIdx = sentence.toLowerCase().indexOf(term.toLowerCase());
+  const useIdx = directIdx >= 0 ? directIdx : idx;
+  const useLen = directIdx >= 0 ? term.length : normalizeTerm(term).replace(/-/g, ' ').length;
+  if (useIdx < 0) return null;
   return {
-    before: sentence.slice(0, idx),
-    match: sentence.slice(idx, idx + term.length),
-    after: sentence.slice(idx + term.length),
+    before: sentence.slice(0, useIdx),
+    match: sentence.slice(useIdx, useIdx + useLen),
+    after: sentence.slice(useIdx + useLen),
   };
 }
 
-function TermPopup({ term, anchor, lessonContent, lessonLang, studentLang, germanProficiency, onClose }: TermPopupProps) {
+function TermPopup({
+  term, anchor, lessonContent, lessonLang, studentLang, germanProficiency, onClose,
+}: TermPopupProps) {
   const popupRef = useRef<HTMLDivElement>(null);
-  const isSameLang = lessonLang === studentLang;
 
-  const explanation = buildExplanation(term, lessonContent, germanProficiency);
+  const explanation = buildExplanation(term, lessonContent, lessonLang, studentLang, germanProficiency);
   const highlighted = explanation.exampleSentence
     ? highlightTerm(explanation.exampleSentence, term)
     : null;
@@ -282,7 +307,7 @@ function TermPopup({ term, anchor, lessonContent, lessonLang, studentLang, germa
     return () => document.removeEventListener('keydown', handle);
   }, [onClose]);
 
-  const popupWidth = 340;
+  const popupWidth = 360;
   let left = anchor.x + anchor.width / 2 - popupWidth / 2;
   left = Math.max(8, Math.min(left, window.innerWidth - popupWidth - 8));
   const top = anchor.y - 8;
@@ -301,11 +326,11 @@ function TermPopup({ term, anchor, lessonContent, lessonLang, studentLang, germa
       aria-modal="true"
     >
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-4 py-3">
+      <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 min-w-0">
-            <Sparkles size={14} className="text-blue-100 shrink-0" />
-            <span className="text-white font-bold text-sm truncate max-w-[220px]">{term}</span>
+            <Sparkles size={14} className="text-blue-200 shrink-0" />
+            <span className="text-white font-bold text-sm truncate max-w-[240px]">{term}</span>
           </div>
           <button
             onClick={onClose}
@@ -314,16 +339,22 @@ function TermPopup({ term, anchor, lessonContent, lessonLang, studentLang, germa
             <X size={15} />
           </button>
         </div>
-        <div className="mt-2">
+        <div className="mt-2 flex items-center gap-2">
           <span className={`inline-flex items-center text-xs font-semibold px-2 py-0.5 rounded-full border ${CEFR_BADGE_COLORS[germanProficiency]}`}>
             {explanation.cefrLabel}
           </span>
+          {!explanation.fromVocabulary && (
+            <span className="inline-flex items-center gap-1 text-xs text-blue-200">
+              <HelpCircle size={10} />
+              from lesson
+            </span>
+          )}
         </div>
       </div>
 
       {/* Body */}
       <div className="p-4 space-y-3">
-        {/* Lesson-language explanation */}
+        {/* Lesson-language definition */}
         <div className="bg-blue-50 rounded-xl p-3">
           <div className="flex items-center gap-1.5 mb-2">
             <BookOpen size={12} className="text-blue-500 shrink-0" />
@@ -334,8 +365,8 @@ function TermPopup({ term, anchor, lessonContent, lessonLang, studentLang, germa
           <p className="text-sm text-gray-800 leading-relaxed">{explanation.lessonLangText}</p>
         </div>
 
-        {/* Native language note — shown only when different from lesson lang */}
-        {!isSameLang && (
+        {/* Native language definition — shown only when different and available */}
+        {lessonLang !== studentLang && explanation.nativeLangText && (
           <div className="bg-emerald-50 rounded-xl p-3">
             <div className="flex items-center gap-1.5 mb-2">
               <Globe size={12} className="text-emerald-500 shrink-0" />
@@ -343,29 +374,32 @@ function TermPopup({ term, anchor, lessonContent, lessonLang, studentLang, germa
                 {LANG_LABELS[studentLang]}
               </span>
             </div>
-            <p className="text-sm text-gray-600 leading-relaxed italic">
-              This explanation is taken directly from your lesson content.
-              The same text appears in {LANG_LABELS[lessonLang]} above.
-            </p>
+            <p className="text-sm text-gray-800 leading-relaxed">{explanation.nativeLangText}</p>
           </div>
         )}
 
-        {/* Example sentence from lesson */}
-        {highlighted && (
+        {/* Example sentence */}
+        {explanation.exampleSentence && (
           <div className="bg-gray-50 rounded-xl p-3">
             <div className="flex items-center gap-1.5 mb-2">
               <Quote size={12} className="text-gray-400 shrink-0" />
               <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                Example from lesson
+                Example
               </span>
             </div>
-            <p className="text-sm text-gray-700 leading-relaxed">
-              {highlighted.before}
-              <mark className="bg-yellow-200 text-yellow-900 px-0.5 rounded font-semibold not-italic">
-                {highlighted.match}
-              </mark>
-              {highlighted.after}
-            </p>
+            {highlighted ? (
+              <p className="text-sm text-gray-700 leading-relaxed">
+                {highlighted.before}
+                <mark className="bg-yellow-200 text-yellow-900 px-0.5 rounded font-semibold">
+                  {highlighted.match}
+                </mark>
+                {highlighted.after}
+              </p>
+            ) : (
+              <p className="text-sm text-gray-700 leading-relaxed italic">
+                {explanation.exampleSentence}
+              </p>
+            )}
           </div>
         )}
       </div>
