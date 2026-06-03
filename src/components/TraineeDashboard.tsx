@@ -12,6 +12,7 @@ import { useTraineeData } from '../hooks/useTraineeData';
 import { getPerformanceRecords, type LessonRecord } from '../hooks/usePerformance';
 import { LayoutDashboard, User, LogOut, Briefcase, GraduationCap, BookOpen, BarChart2 } from 'lucide-react';
 import { TrainerTasksTab } from './tabs/TrainerTasksTab';
+import type { Language } from '../i18n/translations';
 
 type TabType = 'home' | 'teacher_learning' | 'trainer_tasks' | 'teacher_analytics' | 'trainer_analytics' | 'profile';
 
@@ -28,10 +29,12 @@ interface SelectedLesson {
 }
 
 export function TraineeDashboard({ onSignOut }: { onSignOut: () => void }) {
-  const { t, isRTL, language } = useLanguage();
+  const { t, isRTL } = useLanguage();
   const [activeTab, setActiveTab] = useState<TabType>('home');
   const [selectedLesson, setSelectedLesson] = useState<SelectedLesson | null>(null);
   const [testOpen, setTestOpen] = useState(false);
+  // Stores the exact content + language shown in LessonDetail when "Start Test" is clicked
+  const [testContent, setTestContent] = useState<string>('');
   const [records, setRecords] = useState<LessonRecord[]>([]);
 
   const { chapters, loading, error, fetchAll, getContentForTopic, getAvailableLanguages } = useTraineeData();
@@ -48,8 +51,6 @@ export function TraineeDashboard({ onSignOut }: { onSignOut: () => void }) {
     ch.topics.map((tp) => ({ topicId: tp.id, topicTitle: tp.title, chapterTitle: ch.title }))
   );
 
-  const totalTopics = allTopics.length;
-
   const tabs: Tab[] = [
     { id: 'home', label: t.home, icon: <LayoutDashboard size={18} /> },
     { id: 'teacher_learning', label: t.teacher_learning, icon: <GraduationCap size={18} /> },
@@ -62,6 +63,11 @@ export function TraineeDashboard({ onSignOut }: { onSignOut: () => void }) {
   function handleSelectTopic(topicId: string, topicTitle: string, chapterTitle: string) {
     setSelectedLesson({ topicId, topicTitle, chapterTitle });
     setActiveTab('teacher_learning');
+  }
+
+  function handleStartTest(content: string, _contentLang: Language) {
+    setTestContent(content);
+    setTestOpen(true);
   }
 
   return (
@@ -127,7 +133,7 @@ export function TraineeDashboard({ onSignOut }: { onSignOut: () => void }) {
                     topicTitle={selectedLesson.topicTitle}
                     chapterTitle={selectedLesson.chapterTitle}
                     onBack={() => setSelectedLesson(null)}
-                    onStartTest={() => setTestOpen(true)}
+                    onStartTest={handleStartTest}
                     getContent={(lang) => getContentForTopic(selectedLesson.topicId, lang)}
                     availableLanguages={getAvailableLanguages(selectedLesson.topicId)}
                   />
@@ -163,7 +169,7 @@ export function TraineeDashboard({ onSignOut }: { onSignOut: () => void }) {
               topicId={selectedLesson.topicId}
               topicTitle={selectedLesson.topicTitle}
               chapterTitle={selectedLesson.chapterTitle}
-              lessonContent={getContentForTopic(selectedLesson.topicId, language)}
+              lessonContent={testContent}
               onBack={() => setTestOpen(false)}
               onRepeatLesson={() => setTestOpen(false)}
               onNextTopic={(() => {

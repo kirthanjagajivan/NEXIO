@@ -21,7 +21,7 @@ interface LessonDetailProps {
   getContent: (lang: Language) => string;
   availableLanguages: Language[];
   onBack: () => void;
-  onStartTest: () => void;
+  onStartTest: (content: string, contentLang: Language) => void;
 }
 
 function parseContentIntoSections(raw: string): { heading: string; paragraphs: string[] }[] {
@@ -105,6 +105,9 @@ export function LessonDetail({
   const isContentRTL = RTL_LANGUAGES.includes(contentLang);
   const selectedLang = LANGUAGES.find((l) => l.code === contentLang)!;
   const sections = content ? parseContentIntoSections(content) : [];
+
+  // Determine the actual language of the content being shown (may differ from contentLang if fell back to 'en')
+  const effectiveLang: Language = rawContent ? contentLang : 'en';
 
   return (
     <div className={`space-y-4 sm:space-y-6 ${appRTL ? 'text-right' : ''}`}>
@@ -214,7 +217,15 @@ export function LessonDetail({
 
           <div className="pt-4 border-t border-gray-100">
             <button
-              onClick={onStartTest}
+              onClick={() => {
+                console.log('[StartTest]', {
+                  contentLang,
+                  effectiveLang,
+                  contentLength: content.length,
+                  topicTitle,
+                });
+                onStartTest(content, effectiveLang);
+              }}
               className="w-full px-6 py-3.5 bg-blue-600 text-white rounded-xl font-semibold text-sm sm:text-base hover:bg-blue-700 active:scale-[0.99] transition-all shadow-sm"
             >
               {t.startTest}
