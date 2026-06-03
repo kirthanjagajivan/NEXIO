@@ -127,29 +127,30 @@ export function SubmissionReviewTab() {
 
       const score = reviewData.score !== '' ? parseInt(reviewData.score, 10) : null;
       const now = new Date().toISOString();
+      const feedbackText = reviewData.feedback.trim() || null;
 
-      // Update the task submission record
+      // 1. Update the task_submission record
       const { data: updated, error: subError } = await supabase
         .from('task_submissions')
         .update({
           status: reviewData.status,
           score,
-          feedback: reviewData.feedback.trim() || null,
+          feedback: feedbackText,
           reviewed_at: now,
           reviewed_by: user.id,
         })
         .eq('id', reviewing.id)
-        .eq('task_id', reviewing.task_id)
         .select('id');
 
       if (subError) throw subError;
       if (!updated || updated.length === 0) {
-        throw new Error('Review could not be saved — you may not have permission to review this submission.');
+        throw new Error('Review could not be saved — check your permissions.');
       }
 
-      // Sync practical_performance so the trainee's performance dashboard reflects this review.
-      // Only sync when a numeric score was provided and the status is a terminal decision.
-      if (score !== null && (reviewData.status === 'approved' || reviewData.status === 'rejected')) {
+      // 2. Sync practical_performance for all scored terminal statuses.
+      //    Uses upsert with the unique (user_id, task_id) constraint.
+      //    Fetch existing first so we can increment attempts and append score_history.
+      if (score !== null) {
         const passed = reviewData.status === 'approved';
         const scoreOutOf100 = Math.min(100, Math.max(0, score));
 
@@ -160,35 +161,34 @@ export function SubmissionReviewTab() {
           .eq('task_id', reviewing.task_id)
           .maybeSingle();
 
-        if (existing) {
-          const prevHistory: number[] = Array.isArray(existing.score_history) ? existing.score_history : [];
-          await supabase
-            .from('practical_performance')
-            .update({
-              score: scoreOutOf100,
-              total: 100,
-              passed,
-              feedback: reviewData.feedback.trim() || null,
-              attempts: existing.attempts + 1,
-              last_attempt_at: now,
-              score_history: [...prevHistory, scoreOutOf100],
-            })
-            .eq('id', existing.id);
-        } else {
-          await supabase
-            .from('practical_performance')
-            .insert({
+        const prevHistory: number[] = existing?.score_history
+          ? (Array.isArray(existing.score_history) ? existing.score_history : Object.values(existing.score_history))
+          : [];
+        const newAttempts = (existing?.attempts ?? 0) + 1;
+        const newHistory = [...prevHistory, scoreOutOf100];
+
+        const { error: perfError } = await supabase
+          .from('practical_performance')
+          .upsert(
+            {
               user_id: reviewing.trainee_id,
               task_id: reviewing.task_id,
               task_title: reviewing.task_title,
               score: scoreOutOf100,
               total: 100,
               passed,
-              feedback: reviewData.feedback.trim() || null,
-              attempts: 1,
+              feedback: feedbackText,
+              attempts: newAttempts,
               last_attempt_at: now,
-              score_history: [scoreOutOf100],
-            });
+              score_history: newHistory,
+            },
+            { onConflict: 'user_id,task_id' }
+          );
+
+        if (perfError) {
+          // Surface the error so trainer sees it, but don't block the review save
+          console.error('practical_performance sync error:', perfError);
+          setReviewError(`Review saved, but analytics sync failed: ${perfError.message}`);
         }
       }
 

@@ -179,14 +179,96 @@ export function TrainerDashboard({ onSignOut }: { onSignOut: () => void }) {
   );
 }
 
+interface DashboardStats {
+  reviewedCount: number;
+  passedCount: number;
+  avgScore: number | null;
+  feedbackCount: number;
+  recentReviews: Array<{
+    trainee_name: string;
+    task_title: string;
+    score: number | null;
+    passed: boolean;
+    reviewed_at: string;
+  }>;
+}
+
 function TrainerDashboardTab({ trainees, loading }: { trainees: Profile[]; loading: boolean }) {
   const { t } = useLanguage();
+  const [stats, setStats] = useState<DashboardStats>({
+    reviewedCount: 0,
+    passedCount: 0,
+    avgScore: null,
+    feedbackCount: 0,
+    recentReviews: [],
+  });
+  const [statsLoading, setStatsLoading] = useState(true);
+
+  const fetchStats = useCallback(async () => {
+    setStatsLoading(true);
+    try {
+      // Fetch reviewed submissions (any status with a score)
+      const { data: submissions } = await supabase
+        .from('task_submissions')
+        .select('id, trainee_id, score, status, feedback, reviewed_at, practical_tasks(title)')
+        .not('reviewed_at', 'is', null)
+        .order('reviewed_at', { ascending: false });
+
+      if (!submissions || submissions.length === 0) {
+        setStatsLoading(false);
+        return;
+      }
+
+      const withScore = submissions.filter((s: any) => s.score !== null);
+      const passedCount = submissions.filter((s: any) => s.status === 'approved').length;
+      const avgScore = withScore.length > 0
+        ? Math.round(withScore.reduce((sum: number, s: any) => sum + s.score, 0) / withScore.length)
+        : null;
+      const feedbackCount = submissions.filter((s: any) => s.feedback).length;
+
+      // Enrich recent reviews with trainee names
+      const traineeIds = [...new Set(submissions.slice(0, 10).map((s: any) => s.trainee_id))];
+      const { data: profiles } = await supabase
+        .from('user_profiles')
+        .select('id, full_name, email')
+        .in('id', traineeIds);
+      const profileMap: Record<string, string> = {};
+      (profiles || []).forEach((p: any) => {
+        profileMap[p.id] = p.full_name || p.email;
+      });
+
+      const recentReviews = submissions.slice(0, 8).map((s: any) => ({
+        trainee_name: profileMap[s.trainee_id] ?? 'Unknown',
+        task_title: (s.practical_tasks as any)?.title ?? 'Unknown Task',
+        score: s.score,
+        passed: s.status === 'approved',
+        reviewed_at: s.reviewed_at,
+      }));
+
+      setStats({ reviewedCount: submissions.length, passedCount, avgScore, feedbackCount, recentReviews });
+    } catch (e) {
+      console.error('fetchStats error:', e);
+    } finally {
+      setStatsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { fetchStats(); }, [fetchStats]);
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-1">{t.dashboard}</h1>
-        <p className="text-gray-500">{t.trainer_desc}</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-1">{t.dashboard}</h1>
+          <p className="text-gray-500">{t.trainer_desc}</p>
+        </div>
+        <button
+          onClick={fetchStats}
+          className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors"
+        >
+          <RefreshCw size={14} />
+          Refresh
+        </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -197,26 +279,66 @@ function TrainerDashboardTab({ trainees, loading }: { trainees: Profile[]; loadi
           bg="bg-blue-50"
         />
         <StatCard
-          label={t.practical_tasks}
-          value={0}
-          icon={<BookOpen className="text-green-600" size={24} />}
+          label="Reviewed Tasks"
+          value={statsLoading ? '…' : stats.reviewedCount}
+          icon={<ClipboardCheck className="text-green-600" size={24} />}
           bg="bg-green-50"
         />
         <StatCard
           label={t.avg_score}
-          value="—%"
+          value={statsLoading ? '…' : stats.avgScore !== null ? `${stats.avgScore}%` : '—'}
           icon={<TrendingUp className="text-amber-600" size={24} />}
           bg="bg-amber-50"
         />
         <StatCard
-          label={t.feedback}
-          value={0}
+          label="Passed Tasks"
+          value={statsLoading ? '…' : stats.passedCount}
           icon={<MessageSquare className="text-emerald-600" size={24} />}
           bg="bg-emerald-50"
         />
       </div>
 
       <RecentTraineesCard trainees={trainees} loading={loading} />
+
+      {/* Recent reviews table */}
+      {!statsLoading && stats.recentReviews.length > 0 && (
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className="flex items-center gap-2 px-6 py-4 border-b border-gray-100 bg-gray-50">
+            <ClipboardCheck size={16} className="text-gray-500" />
+            <h2 className="font-semibold text-gray-800 text-sm">Recent Reviews</h2>
+          </div>
+          <div className="divide-y divide-gray-100">
+            {stats.recentReviews.map((r, i) => (
+              <div key={i} className="px-6 py-3 flex items-center gap-4 hover:bg-gray-50">
+                <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
+                  <span className="text-amber-700 font-bold text-xs">
+                    {r.trainee_name.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-900 truncate">{r.trainee_name}</p>
+                  <p className="text-xs text-gray-500 truncate">{r.task_title}</p>
+                </div>
+                <div className="flex items-center gap-3 shrink-0">
+                  {r.score !== null && (
+                    <span className={`text-sm font-bold ${r.score >= 60 ? 'text-green-600' : 'text-red-500'}`}>
+                      {r.score}/100
+                    </span>
+                  )}
+                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                    r.passed ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'
+                  }`}>
+                    {r.passed ? 'Passed' : 'Failed'}
+                  </span>
+                  <span className="text-xs text-gray-400">
+                    {new Date(r.reviewed_at).toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
