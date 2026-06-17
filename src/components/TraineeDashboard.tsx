@@ -71,19 +71,19 @@ export function TraineeDashboard({ onSignOut }: { onSignOut: () => void }) {
   }
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex flex-col ${isRTL ? 'direction-rtl' : ''}`}>
-      <header className="w-full px-4 sm:px-6 py-3.5 flex items-center justify-between border-b border-white/60 bg-white/70 backdrop-blur-sm sticky top-0 z-30">
+    <div className={`min-h-screen bg-[#0F172A] flex flex-col ${isRTL ? 'direction-rtl' : ''}`}>
+      <header className="w-full px-4 sm:px-6 py-3.5 flex items-center justify-between border-b border-slate-800 bg-[#0F172A] sticky top-0 z-30">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
             <span className="text-white text-sm font-bold">N</span>
           </div>
-          <span className="font-semibold text-gray-900 text-sm hidden sm:inline">NEXIO</span>
+          <span className="font-semibold text-white text-sm hidden sm:inline">NEXIO</span>
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
           <LanguageSelector />
           <button
             onClick={onSignOut}
-            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors font-medium text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1"
+            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-500/15 border border-red-500/30 text-red-400 hover:bg-red-500/25 transition-colors font-medium text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 focus:ring-offset-slate-900"
             aria-label={t.signOut}
           >
             <LogOut size={16} />
@@ -94,8 +94,8 @@ export function TraineeDashboard({ onSignOut }: { onSignOut: () => void }) {
 
       <div className="flex-1 flex flex-col px-4 sm:px-6 py-6">
         <div className="max-w-3xl w-full mx-auto">
-          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
-            <div className={`flex border-b border-gray-200 overflow-x-auto ${isRTL ? 'flex-row-reverse' : ''}`}>
+          <div className="bg-[#1E293B] rounded-2xl border border-slate-700/60 overflow-hidden flex flex-col">
+            <div className={`flex border-b border-slate-700/60 overflow-x-auto ${isRTL ? 'flex-row-reverse' : ''}`}>
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
@@ -107,8 +107,8 @@ export function TraineeDashboard({ onSignOut }: { onSignOut: () => void }) {
                   }}
                   className={`flex-shrink-0 flex items-center gap-2 px-4 py-4 font-medium text-sm transition-all border-b-2 ${
                     activeTab === tab.id
-                      ? 'border-blue-600 text-blue-700 bg-blue-50/50'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                      ? 'border-blue-500 text-blue-400 bg-blue-500/10'
+                      : 'border-transparent text-slate-500 hover:text-slate-300 hover:bg-slate-700/30'
                   }`}
                 >
                   {tab.icon}
@@ -164,7 +164,7 @@ export function TraineeDashboard({ onSignOut }: { onSignOut: () => void }) {
       </div>
 
       {testOpen && selectedLesson && (
-        <div className="fixed inset-0 z-50 bg-gradient-to-br from-slate-50 to-blue-50 overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-[#0F172A] overflow-y-auto">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6">
             <TestPage
               topicId={selectedLesson.topicId}
@@ -186,4 +186,3 @@ export function TraineeDashboard({ onSignOut }: { onSignOut: () => void }) {
     </div>
   );
 }
-

@@ -50,9 +50,9 @@ const PASS_THRESHOLD = 25;
 
 function ScoreBadge({ score, total }: { score: number; total: number }) {
   const pct = total > 0 ? Math.round((score / total) * 100) : 0;
-  const color = pct >= 75 ? 'text-green-600 bg-green-50 border-green-200'
-    : pct >= 50 ? 'text-amber-600 bg-amber-50 border-amber-200'
-    : 'text-red-500 bg-red-50 border-red-200';
+  const color = pct >= 75 ? 'text-green-400 bg-green-500/15 border-green-500/30'
+    : pct >= 50 ? 'text-amber-400 bg-amber-500/15 border-amber-500/30'
+    : 'text-red-400 bg-red-500/15 border-red-500/30';
   return (
     <span className={`text-sm font-bold px-3 py-1 rounded-full border ${color}`}>
       {score} / {total}
@@ -63,7 +63,7 @@ function ScoreBadge({ score, total }: { score: number; total: number }) {
 function ProgressBar({ score, total, color }: { score: number; total: number; color: string }) {
   const pct = total > 0 ? Math.round((score / total) * 100) : 0;
   return (
-    <div className="w-full bg-gray-100 rounded-full h-2">
+    <div className="w-full bg-slate-700 rounded-full h-2">
       <div className={`h-2 rounded-full transition-all duration-700 ${color}`} style={{ width: `${pct}%` }} />
     </div>
   );
@@ -162,12 +162,12 @@ export function TestPage({ topicId, topicTitle, chapterTitle, lessonContent, onB
   if (genError === 'no_content') {
     return (
       <div className="flex flex-col items-center justify-center py-24 gap-5 text-center">
-        <div className="w-14 h-14 rounded-full bg-amber-50 flex items-center justify-center">
+        <div className="w-14 h-14 rounded-full bg-amber-500/10 flex items-center justify-center">
           <AlertTriangle size={28} className="text-amber-500" />
         </div>
         <div className="space-y-2 max-w-sm">
-          <p className="text-gray-800 font-semibold text-lg">{t.no_content_available}</p>
-          <p className="text-gray-400 text-sm">
+          <p className="text-slate-200 font-semibold text-lg">{t.no_content_available}</p>
+          <p className="text-slate-400 text-sm">
             {t.no_content_available_desc}
           </p>
         </div>
@@ -185,10 +185,10 @@ export function TestPage({ topicId, topicTitle, chapterTitle, lessonContent, onB
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-24 gap-5">
-        <div className="w-16 h-16 rounded-full border-4 border-blue-100 border-t-blue-600 animate-spin" />
+        <div className="w-16 h-16 rounded-full border-4 border-slate-700 border-t-blue-500 animate-spin" />
         <div className="text-center space-y-1">
-          <p className="text-gray-800 font-semibold text-lg">{t.generating_test}</p>
-          <p className="text-gray-400 text-sm">{t.generating_test_desc}</p>
+          <p className="text-slate-200 font-semibold text-lg">{t.generating_test}</p>
+          <p className="text-slate-400 text-sm">{t.generating_test_desc}</p>
         </div>
       </div>
     );
@@ -203,7 +203,7 @@ export function TestPage({ topicId, topicTitle, chapterTitle, lessonContent, onB
       <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
         <button
           onClick={onBack}
-          className={`flex items-center gap-2 px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors font-medium text-sm ${isRTL ? 'flex-row-reverse' : ''}`}
+          className={`flex items-center gap-2 px-4 py-2 text-blue-400 hover:bg-slate-800 rounded-lg transition-colors font-medium text-sm ${isRTL ? 'flex-row-reverse' : ''}`}
         >
           <ArrowLeft size={18} />
           <span>{t.back}</span>
@@ -211,7 +211,7 @@ export function TestPage({ topicId, topicTitle, chapterTitle, lessonContent, onB
         <button
           onClick={handleRetry}
           title={t.regenerate_questions}
-          className="flex items-center gap-1.5 px-3 py-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors text-xs font-medium"
+          className="flex items-center gap-1.5 px-3 py-2 text-slate-500 hover:text-blue-400 hover:bg-slate-800 rounded-lg transition-colors text-xs font-medium"
         >
           <RefreshCw size={13} />
           {t.new_questions}
@@ -233,14 +233,14 @@ export function TestPage({ topicId, topicTitle, chapterTitle, lessonContent, onB
       </div>
 
       <Section title={t.sectionMCQ} marks={TOTAL_MCQ} marksLabel={t.marks} color="blue" icon={<ClipboardList size={20} />}>
-        <p className="text-xs text-gray-400 mb-4">5 questions &middot; {MCQ_MARKS_EACH} marks each</p>
+        <p className="text-xs text-slate-500 mb-4">5 questions &middot; {MCQ_MARKS_EACH} marks each</p>
         <div className="space-y-6">
           {mcqQuestions.map((q, qi) => (
             <div key={q.id} className="space-y-3">
-              <p className="font-medium text-gray-900">
-                <span className="text-blue-600 font-bold me-2">{qi + 1}.</span>
+              <p className="font-medium text-slate-100">
+                <span className="text-blue-400 font-bold me-2">{qi + 1}.</span>
                 {q.question}
-                <span className="ms-2 text-xs text-gray-400 font-normal">({MCQ_MARKS_EACH} {t.marks})</span>
+                <span className="ms-2 text-xs text-slate-500 font-normal">({MCQ_MARKS_EACH} {t.marks})</span>
               </p>
               <div className="space-y-2 ps-4">
                 {q.options.map((opt, oi) => {
@@ -248,7 +248,7 @@ export function TestPage({ topicId, topicTitle, chapterTitle, lessonContent, onB
                   return (
                     <label
                       key={oi}
-                      className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all ${selected ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'} ${isRTL ? 'flex-row-reverse' : ''}`}
+                      className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all ${selected ? 'border-blue-500 bg-blue-500/20' : 'border-slate-700 hover:border-slate-600 hover:bg-slate-700/50'} ${isRTL ? 'flex-row-reverse' : ''}`}
                     >
                       <input
                         type="radio"
@@ -258,7 +258,7 @@ export function TestPage({ topicId, topicTitle, chapterTitle, lessonContent, onB
                         onChange={() => setMcqAnswers((prev) => ({ ...prev, [q.id]: oi }))}
                         className="w-4 h-4 text-blue-600 shrink-0"
                       />
-                      <span className={`text-sm text-gray-700 ${selected ? 'font-medium' : ''}`}>{opt}</span>
+                      <span className={`text-sm text-slate-300 ${selected ? 'font-medium' : ''}`}>{opt}</span>
                     </label>
                   );
                 })}
@@ -269,21 +269,21 @@ export function TestPage({ topicId, topicTitle, chapterTitle, lessonContent, onB
       </Section>
 
       <Section title={t.sectionFillBlanks} marks={TOTAL_FB} marksLabel={t.marks} color="green" icon={<ClipboardList size={20} />}>
-        <p className="text-xs text-gray-400 mb-4">5 questions &middot; {FB_MARKS_EACH} marks each</p>
+        <p className="text-xs text-slate-500 mb-4">5 questions &middot; {FB_MARKS_EACH} marks each</p>
         <div className="space-y-5">
           {fillBlankQuestions.map((q, qi) => (
             <div key={q.id} className="space-y-2">
-              <p className="text-xs text-gray-400 font-semibold uppercase tracking-wide">
+              <p className="text-xs text-slate-500 font-semibold uppercase tracking-wide">
                 {qi + 1}. ({FB_MARKS_EACH} {t.marks})
               </p>
-              <div className={`flex items-center flex-wrap gap-2 text-gray-900 font-medium ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <div className={`flex items-center flex-wrap gap-2 text-slate-100 font-medium ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <span>{q.before}</span>
                 <input
                   type="text"
                   placeholder="________"
                   value={fillAnswers[q.id] || ''}
                   onChange={(e) => setFillAnswers((prev) => ({ ...prev, [q.id]: e.target.value }))}
-                  className="border-b-2 border-green-400 bg-transparent px-2 py-1 w-36 text-center text-green-700 font-semibold focus:outline-none focus:border-green-600 placeholder-gray-300 transition-colors"
+                  className="border-b-2 border-green-400 bg-transparent px-2 py-1 w-36 text-center text-green-400 font-semibold focus:outline-none focus:border-green-600 placeholder-slate-600 transition-colors"
                 />
                 <span>{q.after}</span>
               </div>
@@ -337,7 +337,7 @@ function ResultsView({ result, topicTitle, chapterTitle, onBack, onRepeatLesson,
     <div className={`space-y-6 pb-8 ${isRTL ? 'text-right' : ''}`}>
       <button
         onClick={onBack}
-        className={`flex items-center gap-2 px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors font-medium text-sm ${isRTL ? 'flex-row-reverse' : ''}`}
+        className={`flex items-center gap-2 px-4 py-2 text-blue-400 hover:bg-slate-800 rounded-lg transition-colors font-medium text-sm ${isRTL ? 'flex-row-reverse' : ''}`}
       >
         <ArrowLeft size={18} />
         <span>{t.backToLesson}</span>
@@ -354,59 +354,59 @@ function ResultsView({ result, topicTitle, chapterTitle, onBack, onRepeatLesson,
         <p className="text-white/60 text-xs mt-2">{chapterTitle} — {topicTitle}</p>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="bg-[#1E293B] rounded-xl border border-slate-700/60 overflow-hidden">
         <div className="p-8">
           <div className={`flex items-center justify-between gap-6 flex-wrap ${isRTL ? 'flex-row-reverse' : ''}`}>
             <div className="text-center flex-1 min-w-[120px]">
-              <p className="text-xs text-gray-400 uppercase tracking-widest font-semibold mb-1">{t.score}</p>
-              <p className="text-5xl font-bold text-gray-900">
+              <p className="text-xs text-slate-400 uppercase tracking-widest font-semibold mb-1">{t.score}</p>
+              <p className="text-5xl font-bold text-white">
                 {result.totalScore}
-                <span className="text-2xl text-gray-400 font-normal"> / {result.grandTotal}</span>
+                <span className="text-2xl text-slate-400 font-normal"> / {result.grandTotal}</span>
               </p>
             </div>
-            <div className="w-px h-16 bg-gray-200 hidden sm:block" />
+            <div className="w-px h-16 bg-slate-700/60 hidden sm:block" />
             <div className="text-center flex-1 min-w-[80px]">
-              <p className="text-xs text-gray-400 uppercase tracking-widest font-semibold mb-1">{t.percentage}</p>
+              <p className="text-xs text-slate-400 uppercase tracking-widest font-semibold mb-1">{t.percentage}</p>
               <p className={`text-5xl font-bold ${passed ? 'text-green-600' : 'text-red-500'}`}>{pct}%</p>
             </div>
-            <div className="w-px h-16 bg-gray-200 hidden sm:block" />
+            <div className="w-px h-16 bg-slate-700/60 hidden sm:block" />
             <div className="text-center flex-1 min-w-[80px]">
-              <p className="text-xs text-gray-400 uppercase tracking-widest font-semibold mb-1">{t.grade}</p>
+              <p className="text-xs text-slate-400 uppercase tracking-widest font-semibold mb-1">{t.grade}</p>
               <p className={`text-5xl font-bold ${grade.color}`}>{grade.label}</p>
             </div>
           </div>
           <div className="mt-6">
-            <div className="w-full bg-gray-100 rounded-full h-4 overflow-hidden">
+            <div className="w-full bg-slate-700 rounded-full h-4 overflow-hidden">
               <div
                 className={`h-4 rounded-full transition-all duration-1000 ${passed ? 'bg-gradient-to-r from-green-400 to-emerald-500' : 'bg-gradient-to-r from-red-400 to-rose-500'}`}
                 style={{ width: `${pct}%` }}
               />
             </div>
-            <div className="flex justify-between mt-2 text-xs text-gray-400">
+            <div className="flex justify-between mt-2 text-xs text-slate-500">
               <span>0</span>
-              <span className="font-semibold text-gray-500">{t.pass_threshold}: {PASS_THRESHOLD} / {result.grandTotal}</span>
+              <span className="font-semibold text-slate-400">{t.pass_threshold}: {PASS_THRESHOLD} / {result.grandTotal}</span>
               <span>{result.grandTotal}</span>
             </div>
           </div>
         </div>
-        <div className="border-t border-gray-100 grid grid-cols-2 divide-x divide-gray-100">
+        <div className="border-t border-slate-700/60 grid grid-cols-2 divide-x divide-slate-700/60">
           {[
             { label: t.mcq_section_label, score: result.mcqScore, total: result.mcqTotal, color: 'bg-blue-500' },
             { label: t.fill_blank_section_label, score: result.fillScore, total: result.fillTotal, color: 'bg-green-500' },
           ].map((sec) => (
             <div key={sec.label} className="p-4 text-center">
-              <p className="text-xs text-gray-400 font-semibold mb-1 truncate">{sec.label}</p>
-              <p className="text-xl font-bold text-gray-900">{sec.score}<span className="text-sm text-gray-400 font-normal"> / {sec.total}</span></p>
+              <p className="text-xs text-slate-400 font-semibold mb-1 truncate">{sec.label}</p>
+              <p className="text-xl font-bold text-white">{sec.score}<span className="text-sm text-slate-400 font-normal"> / {sec.total}</span></p>
               <div className="mt-2"><ProgressBar score={sec.score} total={sec.total} color={sec.color} /></div>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-blue-200 overflow-hidden">
-        <div className="flex items-center gap-2 px-6 py-4 bg-blue-50 border-b border-blue-200">
-          <BookOpen size={18} className="text-blue-600" />
-          <h3 className="font-bold text-blue-900">{t.sectionMCQ} {t.review_suffix}</h3>
+      <div className="bg-[#1E293B] rounded-xl border border-blue-500/30 overflow-hidden">
+        <div className="flex items-center gap-2 px-6 py-4 bg-blue-500/10 border-b border-blue-500/30">
+          <BookOpen size={18} className="text-blue-400" />
+          <h3 className="font-bold text-blue-300">{t.sectionMCQ} {t.review_suffix}</h3>
           <div className="ms-auto"><ScoreBadge score={result.mcqScore} total={result.mcqTotal} /></div>
         </div>
         <div className="p-6 space-y-5">
@@ -416,34 +416,34 @@ function ResultsView({ result, topicTitle, chapterTitle, onBack, onRepeatLesson,
             const unanswered = chosen === undefined;
             const explanation = result.explanations[q.id];
             return (
-              <div key={q.id} className={`rounded-lg border p-4 ${correct ? 'border-green-200 bg-green-50' : unanswered ? 'border-gray-200 bg-gray-50' : 'border-red-200 bg-red-50'}`}>
+              <div key={q.id} className={`rounded-lg border p-4 ${correct ? 'border-green-500/30 bg-green-500/10' : unanswered ? 'border-slate-700 bg-slate-800/50' : 'border-red-500/30 bg-red-500/10'}`}>
                 <div className={`flex items-start gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
                   <div className="shrink-0 mt-0.5">
-                    {correct ? <CheckCircle size={18} className="text-green-600" /> : unanswered ? <MinusCircle size={18} className="text-gray-400" /> : <XCircle size={18} className="text-red-500" />}
+                    {correct ? <CheckCircle size={18} className="text-green-600" /> : unanswered ? <MinusCircle size={18} className="text-slate-500" /> : <XCircle size={18} className="text-red-500" />}
                   </div>
                   <div className="flex-1">
-                    <p className="font-medium text-gray-900 text-sm mb-2">
-                      <span className="text-gray-400 me-1">{qi + 1}.</span> {q.question}
+                    <p className="font-medium text-slate-100 text-sm mb-2">
+                      <span className="text-slate-500 me-1">{qi + 1}.</span> {q.question}
                     </p>
                     <div className="space-y-1">
                       {chosen !== undefined ? (
-                        <div className={`flex items-center gap-2 text-sm px-3 py-1.5 rounded ${correct ? 'bg-green-100 text-green-800 font-medium' : 'bg-red-100 text-red-700'} ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <div className={`flex items-center gap-2 text-sm px-3 py-1.5 rounded ${correct ? 'bg-green-500/20 text-green-300 font-medium' : 'bg-red-500/20 text-red-400'} ${isRTL ? 'flex-row-reverse' : ''}`}>
                           {correct ? <CheckCircle size={13} className="text-green-600 shrink-0" /> : <XCircle size={13} className="text-red-500 shrink-0" />}
                           <span>{q.options[chosen]}</span>
                         </div>
                       ) : (
-                        <div className={`flex items-center gap-2 text-sm px-3 py-1.5 rounded bg-gray-100 text-gray-400 italic ${isRTL ? 'flex-row-reverse' : ''}`}>
-                          <MinusCircle size={13} className="text-gray-400 shrink-0" />
+                        <div className={`flex items-center gap-2 text-sm px-3 py-1.5 rounded bg-slate-800 text-slate-500 italic ${isRTL ? 'flex-row-reverse' : ''}`}>
+                          <MinusCircle size={13} className="text-slate-500 shrink-0" />
                           <span>{t.no_answer_selected}</span>
                         </div>
                       )}
                     </div>
                     <p className="mt-2 text-xs font-semibold">
                       {correct
-                        ? <span className="text-green-700">{t.correct_marks} +{MCQ_MARKS_EACH} {t.marks}</span>
+                        ? <span className="text-green-400">{t.correct_marks} +{MCQ_MARKS_EACH} {t.marks}</span>
                         : unanswered
-                        ? <span className="text-gray-400">{t.not_answered}</span>
-                        : <><span className="text-red-600">{t.incorrect_marks}</span><span className="text-gray-400 ms-2">{t.correct_answer_prefix} {q.options[q.correct]}</span></>}
+                        ? <span className="text-slate-500">{t.not_answered}</span>
+                        : <><span className="text-red-400">{t.incorrect_marks}</span><span className="text-slate-500 ms-2">{t.correct_answer_prefix} {q.options[q.correct]}</span></>}
                     </p>
                     {!correct && !unanswered && explanation && <AiExplanation explanation={explanation} />}
                   </div>
@@ -454,10 +454,10 @@ function ResultsView({ result, topicTitle, chapterTitle, onBack, onRepeatLesson,
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-green-200 overflow-hidden">
-        <div className="flex items-center gap-2 px-6 py-4 bg-green-50 border-b border-green-200">
-          <BookOpen size={18} className="text-green-600" />
-          <h3 className="font-bold text-green-900">{t.sectionFillBlanks} {t.review_suffix}</h3>
+      <div className="bg-[#1E293B] rounded-xl border border-green-500/30 overflow-hidden">
+        <div className="flex items-center gap-2 px-6 py-4 bg-green-500/10 border-b border-green-500/30">
+          <BookOpen size={18} className="text-green-400" />
+          <h3 className="font-bold text-green-300">{t.sectionFillBlanks} {t.review_suffix}</h3>
           <div className="ms-auto"><ScoreBadge score={result.fillScore} total={result.fillTotal} /></div>
         </div>
         <div className="p-6 space-y-4">
@@ -467,25 +467,25 @@ function ResultsView({ result, topicTitle, chapterTitle, onBack, onRepeatLesson,
             const unanswered = !given;
             const explanation = result.explanations[q.id];
             return (
-              <div key={q.id} className={`rounded-lg border p-4 ${correct ? 'border-green-200 bg-green-50' : unanswered ? 'border-gray-200 bg-gray-50' : 'border-red-200 bg-red-50'}`}>
+              <div key={q.id} className={`rounded-lg border p-4 ${correct ? 'border-green-500/30 bg-green-500/10' : unanswered ? 'border-slate-700 bg-slate-800/50' : 'border-red-500/30 bg-red-500/10'}`}>
                 <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
                   <div className="shrink-0">
-                    {correct ? <CheckCircle size={18} className="text-green-600" /> : unanswered ? <MinusCircle size={18} className="text-gray-400" /> : <XCircle size={18} className="text-red-500" />}
+                    {correct ? <CheckCircle size={18} className="text-green-600" /> : unanswered ? <MinusCircle size={18} className="text-slate-500" /> : <XCircle size={18} className="text-red-500" />}
                   </div>
                   <div className="flex-1 text-sm">
-                    <span className="text-gray-500">{q.before} </span>
-                    <span className={`font-bold px-2 py-0.5 rounded ${correct ? 'text-green-700 bg-green-100' : unanswered ? 'text-gray-400 bg-gray-100 italic' : 'text-red-600 bg-red-100'}`}>
+                    <span className="text-slate-400">{q.before} </span>
+                    <span className={`font-bold px-2 py-0.5 rounded ${correct ? 'text-green-400 bg-green-500/20' : unanswered ? 'text-slate-500 bg-slate-700 italic' : 'text-red-400 bg-red-500/20'}`}>
                       {given || t.blank_placeholder}
                     </span>
-                    <span className="text-gray-500"> {q.after}</span>
+                    <span className="text-slate-400"> {q.after}</span>
                   </div>
-                  <span className={`text-xs font-bold shrink-0 ${correct ? 'text-green-600' : 'text-gray-400'}`}>
+                  <span className={`text-xs font-bold shrink-0 ${correct ? 'text-green-400' : 'text-slate-500'}`}>
                     {correct ? `+${FB_MARKS_EACH}` : '0'} {t.marks}
                   </span>
                 </div>
                 {!correct && !unanswered && explanation && <AiExplanation explanation={explanation} />}
                 {!correct && !unanswered && (
-                  <p className="mt-2 text-xs text-gray-500 ms-9">{t.correct_answer_label} <span className="font-semibold text-gray-700">{q.answer}</span></p>
+                  <p className="mt-2 text-xs text-slate-400 ms-9">{t.correct_answer_label} <span className="font-semibold text-slate-200">{q.answer}</span></p>
                 )}
               </div>
             );
@@ -498,7 +498,7 @@ function ResultsView({ result, topicTitle, chapterTitle, onBack, onRepeatLesson,
           <>
             <button
               onClick={onBack}
-              className="flex-1 py-4 border-2 border-gray-200 text-gray-700 rounded-xl font-bold text-base hover:bg-gray-50 transition-colors active:scale-[0.99]"
+              className="flex-1 py-4 border-2 border-slate-700 text-slate-300 hover:bg-slate-800 rounded-xl font-bold text-base transition-colors active:scale-[0.99]"
             >
               {t.backToLesson}
             </button>
@@ -514,7 +514,7 @@ function ResultsView({ result, topicTitle, chapterTitle, onBack, onRepeatLesson,
           <>
             <button
               onClick={onBack}
-              className="flex-1 py-4 border-2 border-gray-200 text-gray-700 rounded-xl font-bold text-base hover:bg-gray-50 transition-colors active:scale-[0.99]"
+              className="flex-1 py-4 border-2 border-slate-700 text-slate-300 hover:bg-slate-800 rounded-xl font-bold text-base transition-colors active:scale-[0.99]"
             >
               {t.backToLesson}
             </button>
@@ -542,14 +542,14 @@ interface SectionProps {
 }
 
 const colorMap = {
-  blue: { header: 'bg-blue-50 border-blue-200', badge: 'bg-blue-100 text-blue-700', icon: 'text-blue-600', title: 'text-blue-900', border: 'border-blue-200' },
-  green: { header: 'bg-green-50 border-green-200', badge: 'bg-green-100 text-green-700', icon: 'text-green-600', title: 'text-green-900', border: 'border-green-200' },
+  blue: { header: 'bg-blue-500/10 border-blue-500/30', badge: 'bg-blue-500/20 text-blue-300', icon: 'text-blue-400', title: 'text-blue-300', border: 'border-blue-500/30' },
+  green: { header: 'bg-green-500/10 border-green-500/30', badge: 'bg-green-500/20 text-green-300', icon: 'text-green-400', title: 'text-green-300', border: 'border-green-500/30' },
 };
 
 function Section({ title, marks, marksLabel, color, icon, children }: SectionProps) {
   const c = colorMap[color];
   return (
-    <div className={`bg-white rounded-xl border ${c.border} overflow-hidden`}>
+    <div className={`bg-[#1E293B] rounded-xl border ${c.border} overflow-hidden`}>
       <div className={`flex items-center justify-between px-6 py-4 border-b ${c.header}`}>
         <div className={`flex items-center gap-2 ${c.icon}`}>
           {icon}

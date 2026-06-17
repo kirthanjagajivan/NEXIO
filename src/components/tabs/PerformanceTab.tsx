@@ -35,10 +35,10 @@ function analyzeTrend(records: LessonRecord[]): FeedbackType {
 
 function StatCard({ label, value, sub, color }: { label: string; value: string | number; sub?: string; color: string }) {
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-5 flex flex-col gap-1">
-      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">{label}</p>
+    <div className="bg-[#1E293B] rounded-xl border border-slate-700/60 p-5 flex flex-col gap-1">
+      <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{label}</p>
       <p className={`text-3xl font-bold ${color}`}>{value}</p>
-      {sub && <p className="text-xs text-gray-400">{sub}</p>}
+      {sub && <p className="text-xs text-slate-400">{sub}</p>}
     </div>
   );
 }
@@ -46,20 +46,20 @@ function StatCard({ label, value, sub, color }: { label: string; value: string |
 function ScoreBar({ score, total }: { score: number; total: number }) {
   const pct = total > 0 ? Math.round((score / total) * 100) : 0;
   const color =
-    pct >= 80 ? 'bg-green-500' :
+    pct >= 80 ? 'bg-emerald-500' :
     pct >= 60 ? 'bg-blue-500' :
     pct >= 40 ? 'bg-amber-500' :
     'bg-red-500';
 
   return (
     <div className="flex items-center gap-3 flex-1">
-      <div className="flex-1 bg-gray-100 rounded-full h-2.5 overflow-hidden">
+      <div className="flex-1 bg-slate-700 rounded-full h-2.5 overflow-hidden">
         <div
           className={`h-2.5 rounded-full transition-all duration-700 ${color}`}
           style={{ width: `${pct}%` }}
         />
       </div>
-      <span className="text-sm font-bold text-gray-700 w-16 text-right">{score} / {total}</span>
+      <span className="text-sm font-bold text-slate-300 w-16 text-right">{score} / {total}</span>
     </div>
   );
 }
@@ -101,50 +101,50 @@ export function PerformanceTab() {
     improving: {
       label: t.you_are_improving,
       description: t.you_are_improving_desc,
-      icon: <TrendingUp size={20} className="text-blue-600" />,
-      bg: 'bg-blue-50',
-      border: 'border-blue-200',
-      labelColor: 'text-blue-800',
-      descColor: 'text-blue-600',
+      icon: <TrendingUp size={20} className="text-blue-400" />,
+      bg: 'bg-blue-500/20',
+      border: 'border-blue-500/30',
+      labelColor: 'text-blue-300',
+      descColor: 'text-blue-400',
     },
     excellent: {
       label: t.excellent_performance,
       description: t.excellent_performance_desc,
-      icon: <Star size={20} className="text-amber-500" />,
-      bg: 'bg-amber-50',
-      border: 'border-amber-200',
-      labelColor: 'text-amber-800',
-      descColor: 'text-amber-600',
+      icon: <Star size={20} className="text-amber-400" />,
+      bg: 'bg-amber-500/20',
+      border: 'border-amber-500/30',
+      labelColor: 'text-amber-300',
+      descColor: 'text-amber-400',
     },
     low: {
       label: t.needs_more_practice,
       description: t.needs_more_practice_desc,
-      icon: <TrendingDown size={20} className="text-red-500" />,
-      bg: 'bg-red-50',
-      border: 'border-red-200',
-      labelColor: 'text-red-800',
-      descColor: 'text-red-600',
+      icon: <TrendingDown size={20} className="text-red-400" />,
+      bg: 'bg-red-500/20',
+      border: 'border-red-500/30',
+      labelColor: 'text-red-300',
+      descColor: 'text-red-400',
     },
     neutral: {
       label: t.steady_progress,
       description: t.steady_progress_desc,
-      icon: <Minus size={20} className="text-gray-500" />,
-      bg: 'bg-gray-50',
-      border: 'border-gray-200',
-      labelColor: 'text-gray-800',
-      descColor: 'text-gray-500',
+      icon: <Minus size={20} className="text-slate-400" />,
+      bg: 'bg-slate-700/40',
+      border: 'border-slate-700/60',
+      labelColor: 'text-slate-200',
+      descColor: 'text-slate-400',
     },
   };
 
   if (records.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 gap-4">
-        <div className="w-20 h-20 rounded-2xl bg-gray-100 flex items-center justify-center">
-          <TrendingUp className="w-10 h-10 text-gray-300" />
+        <div className="w-20 h-20 rounded-2xl bg-[#1E293B] border border-slate-700/60 flex items-center justify-center">
+          <TrendingUp className="w-10 h-10 text-slate-500" />
         </div>
         <div className="text-center">
-          <p className="text-gray-700 font-semibold text-lg">{t.noPerformanceData}</p>
-          <p className="text-gray-400 text-sm mt-1">{t.complete_lesson_prompt}</p>
+          <p className="text-slate-200 font-semibold text-lg">{t.noPerformanceData}</p>
+          <p className="text-slate-400 text-sm mt-1">{t.complete_lesson_prompt}</p>
         </div>
       </div>
     );
@@ -164,12 +164,12 @@ export function PerformanceTab() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold text-gray-900">{t.performance_overview}</h2>
-          <p className="text-sm text-gray-400 mt-0.5">{records.length} {t.lessons_tracked}</p>
+          <h2 className="text-xl font-bold text-white">{t.performance_overview}</h2>
+          <p className="text-sm text-slate-400 mt-0.5">{records.length} {t.lessons_tracked}</p>
         </div>
         <button
           onClick={handleClear}
-          className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-red-500 hover:bg-red-50 rounded-lg border border-red-200 transition-colors"
+          className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-red-400 hover:bg-red-500/20 rounded-lg border border-red-500/30 transition-colors"
         >
           <RotateCcw size={13} />
           {t.clear_history}
@@ -184,32 +184,32 @@ export function PerformanceTab() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-[#1E293B] rounded-xl border border-slate-700/60 p-6">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <BookMarked size={16} className="text-blue-500" />
-            <span className="font-semibold text-gray-800 text-sm">{t.course_completion_label}</span>
+            <BookMarked size={16} className="text-blue-400" />
+            <span className="font-semibold text-slate-200 text-sm">{t.course_completion_label}</span>
           </div>
-          <span className="text-2xl font-bold text-blue-600">{completionPct}%</span>
+          <span className="text-2xl font-bold text-blue-400">{completionPct}%</span>
         </div>
-        <div className="w-full bg-gray-100 rounded-full h-4 overflow-hidden">
+        <div className="w-full bg-slate-700 rounded-full h-4 overflow-hidden">
           <div
-            className="h-4 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 transition-all duration-1000 ease-out"
+            className="h-4 rounded-full bg-gradient-to-r from-blue-500 to-blue-400 transition-all duration-1000 ease-out"
             style={{ width: `${completionPct}%` }}
           />
         </div>
         <div className="flex justify-between items-center mt-2.5">
-          <p className="text-xs text-gray-400">
-            <span className="font-semibold text-gray-600">{records.length}</span> of{' '}
-            <span className="font-semibold text-gray-600">{totalTopics}</span> {t.lessons_completed_of}
+          <p className="text-xs text-slate-400">
+            <span className="font-semibold text-slate-300">{records.length}</span> of{' '}
+            <span className="font-semibold text-slate-300">{totalTopics}</span> {t.lessons_completed_of}
           </p>
           {records.length === totalTopics && (
-            <span className="text-xs font-semibold text-green-600 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full">
+            <span className="text-xs font-semibold text-emerald-400 bg-emerald-500/20 border border-emerald-500/30 px-2 py-0.5 rounded-full">
               {t.all_lessons_done}
             </span>
           )}
           {records.length < totalTopics && (
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-slate-400">
               {totalTopics - records.length} {t.remaining}
             </span>
           )}
@@ -217,18 +217,18 @@ export function PerformanceTab() {
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <StatCard label={t.lessons_tracked_label} value={records.length} color="text-gray-900" />
-        <StatCard label={t.passed_stat} value={passed} sub={`${records.length - passed} ${t.failed_label}`} color="text-green-600" />
-        <StatCard label={t.avg_score} value={`${avgScore}/50`} sub={`${avgPct}%`} color={avgPct >= 60 ? 'text-blue-600' : 'text-amber-600'} />
-        <StatCard label={t.total_attempts} value={totalAttempts} sub={t.across_all_lessons} color="text-gray-900" />
+        <StatCard label={t.lessons_tracked_label} value={records.length} color="text-slate-100" />
+        <StatCard label={t.passed_stat} value={passed} sub={`${records.length - passed} ${t.failed_label}`} color="text-emerald-400" />
+        <StatCard label={t.avg_score} value={`${avgScore}/50`} sub={`${avgPct}%`} color={avgPct >= 60 ? 'text-blue-400' : 'text-amber-400'} />
+        <StatCard label={t.total_attempts} value={totalAttempts} sub={t.across_all_lessons} color="text-slate-100" />
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="flex items-center gap-2 px-6 py-4 border-b border-gray-100 bg-gray-50">
-          <BookOpen size={16} className="text-gray-500" />
-          <h3 className="font-semibold text-gray-800 text-sm">{t.lesson_results}</h3>
+      <div className="bg-[#1E293B] rounded-xl border border-slate-700/60 overflow-hidden">
+        <div className="flex items-center gap-2 px-6 py-4 border-b border-slate-700/50 bg-slate-900/50">
+          <BookOpen size={16} className="text-slate-400" />
+          <h3 className="font-semibold text-slate-200 text-sm">{t.lesson_results}</h3>
         </div>
-        <div className="divide-y divide-gray-100">
+        <div className="divide-y divide-slate-700/50">
           {records.map((record) => {
             const pct = Math.round((record.score / record.total) * 100);
             const grade =
@@ -238,9 +238,9 @@ export function PerformanceTab() {
               pct >= 60 ? 'C' :
               pct >= 50 ? 'D' : 'F';
             const gradeColor =
-              pct >= 70 ? 'text-green-600 bg-green-50 border-green-200' :
-              pct >= 50 ? 'text-amber-600 bg-amber-50 border-amber-200' :
-              'text-red-500 bg-red-50 border-red-200';
+              pct >= 70 ? 'text-emerald-400 bg-emerald-500/20 border-emerald-500/30' :
+              pct >= 50 ? 'text-amber-400 bg-amber-500/20 border-amber-500/30' :
+              'text-red-400 bg-red-500/20 border-red-500/30';
 
             const history = record.scoreHistory ?? [record.score];
 
@@ -248,14 +248,14 @@ export function PerformanceTab() {
               <div key={record.topicId} className="px-6 py-4">
                 <div className="flex items-start justify-between gap-4 flex-wrap">
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${record.passed ? 'bg-green-100' : 'bg-red-100'}`}>
+                    <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${record.passed ? 'bg-emerald-500/20' : 'bg-red-500/20'}`}>
                       {record.passed
-                        ? <CheckCircle size={16} className="text-green-600" />
-                        : <XCircle size={16} className="text-red-500" />}
+                        ? <CheckCircle size={16} className="text-emerald-400" />
+                        : <XCircle size={16} className="text-red-400" />}
                     </div>
                     <div className="min-w-0">
-                      <p className="font-semibold text-gray-900 text-sm truncate">{record.lessonName}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">
+                      <p className="font-semibold text-slate-100 text-sm truncate">{record.lessonName}</p>
+                      <p className="text-xs text-slate-400 mt-0.5">
                         {record.attempts} {t.attempts_label} &middot; Last: {formatDate(record.lastAttemptAt)}
                       </p>
                     </div>
@@ -264,36 +264,36 @@ export function PerformanceTab() {
                     <span className={`text-xs font-bold px-2.5 py-1 rounded-full border ${gradeColor}`}>
                       {grade}
                     </span>
-                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${record.passed ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>
+                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${record.passed ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
                       {record.passed ? t.pass_badge : t.fail_badge}
                     </span>
                   </div>
                 </div>
                 <div className="mt-3 flex items-center gap-3">
                   <ScoreBar score={record.score} total={record.total} />
-                  <span className="text-xs text-gray-400 shrink-0">{pct}%</span>
+                  <span className="text-xs text-slate-400 shrink-0">{pct}%</span>
                 </div>
                 {history.length > 1 && (
                   <div className="mt-3 flex items-center gap-1.5 flex-wrap">
-                    <span className="text-xs text-gray-400 shrink-0">{t.attempts_label}</span>
+                    <span className="text-xs text-slate-400 shrink-0">{t.attempts_label}</span>
                     {history.map((s, i) => {
                       const sPct = Math.round((s / record.total) * 100);
                       const isLast = i === history.length - 1;
                       const prev = i > 0 ? history[i - 1] : null;
                       const improved = prev !== null && s > prev;
                       const declined = prev !== null && s < prev;
-                      const scoreColor = sPct >= 80 ? 'text-green-700 bg-green-50 border-green-200'
-                        : sPct >= 60 ? 'text-blue-700 bg-blue-50 border-blue-200'
-                        : sPct >= 40 ? 'text-amber-700 bg-amber-50 border-amber-200'
-                        : 'text-red-600 bg-red-50 border-red-200';
+                      const scoreColor = sPct >= 80 ? 'text-emerald-400 bg-emerald-500/20 border-emerald-500/30'
+                        : sPct >= 60 ? 'text-blue-400 bg-blue-500/20 border-blue-500/30'
+                        : sPct >= 40 ? 'text-amber-400 bg-amber-500/20 border-amber-500/30'
+                        : 'text-red-400 bg-red-500/20 border-red-500/30';
                       return (
                         <div key={i} className="flex items-center gap-1">
                           {i > 0 && (
-                            <span className={`text-xs font-bold ${improved ? 'text-green-500' : declined ? 'text-red-400' : 'text-gray-300'}`}>
+                            <span className={`text-xs font-bold ${improved ? 'text-emerald-400' : declined ? 'text-red-400' : 'text-slate-500'}`}>
                               {improved ? '↑' : declined ? '↓' : '→'}
                             </span>
                           )}
-                          <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${scoreColor} ${isLast ? 'ring-1 ring-offset-1 ring-gray-300' : ''}`}>
+                          <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${scoreColor} ${isLast ? 'ring-1 ring-offset-1 ring-slate-600' : ''}`}>
                             {s}/{record.total}
                           </span>
                         </div>
@@ -307,30 +307,30 @@ export function PerformanceTab() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="flex items-center gap-2 px-6 py-4 border-b border-gray-100 bg-gray-50">
-          <Target size={16} className="text-gray-500" />
-          <h3 className="font-semibold text-gray-800 text-sm">{t.pass_fail_summary}</h3>
+      <div className="bg-[#1E293B] rounded-xl border border-slate-700/60 overflow-hidden">
+        <div className="flex items-center gap-2 px-6 py-4 border-b border-slate-700/50 bg-slate-900/50">
+          <Target size={16} className="text-slate-400" />
+          <h3 className="font-semibold text-slate-200 text-sm">{t.pass_fail_summary}</h3>
         </div>
         <div className="p-6">
           <div className="flex items-center gap-4">
             <div className="flex-1">
-              <div className="flex justify-between text-xs text-gray-500 mb-1.5">
-                <span className="font-medium text-green-600">{passed} {t.passed_stat.toLowerCase()}</span>
-                <span className="font-medium text-red-500">{records.length - passed} {t.failed_label}</span>
+              <div className="flex justify-between text-xs text-slate-400 mb-1.5">
+                <span className="font-medium text-emerald-400">{passed} {t.passed_stat.toLowerCase()}</span>
+                <span className="font-medium text-red-400">{records.length - passed} {t.failed_label}</span>
               </div>
-              <div className="w-full bg-red-100 rounded-full h-3 overflow-hidden">
+              <div className="w-full bg-red-500/20 rounded-full h-3 overflow-hidden">
                 <div
-                  className="h-3 rounded-full bg-green-500 transition-all duration-700"
+                  className="h-3 rounded-full bg-emerald-500 transition-all duration-700"
                   style={{ width: records.length > 0 ? `${Math.round((passed / records.length) * 100)}%` : '0%' }}
                 />
               </div>
-              <p className="text-xs text-gray-400 mt-1.5 text-center">
+              <p className="text-xs text-slate-400 mt-1.5 text-center">
                 {records.length > 0 ? Math.round((passed / records.length) * 100) : 0}{t.pass_rate}
               </p>
             </div>
             <div className="shrink-0 text-center">
-              <Award size={32} className={passed >= records.length / 2 ? 'text-amber-400' : 'text-gray-300'} />
+              <Award size={32} className={passed >= records.length / 2 ? 'text-amber-400' : 'text-slate-500'} />
             </div>
           </div>
         </div>

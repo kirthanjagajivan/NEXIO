@@ -79,32 +79,32 @@ export function TrainerDashboard({ onSignOut }: { onSignOut: () => void }) {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <header className="w-full bg-white border-b border-gray-200 px-6 py-4">
+    <div className="min-h-screen bg-[#0F172A] flex flex-col">
+      <header className="w-full bg-[#0F172A] border-b border-slate-800 px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-amber-600 flex items-center justify-center shadow-sm">
               <GraduationCap size={18} className="text-white" />
             </div>
             <div>
-              <p className="text-xs text-gray-400 font-medium leading-none mb-0.5">
+              <p className="text-xs text-slate-400 font-medium leading-none mb-0.5">
                 {t.admin_dashboard}
               </p>
-              <p className="font-bold text-gray-900 text-sm leading-none">{t.trainer}</p>
+              <p className="font-bold text-white text-sm leading-none">{t.trainer}</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <button
               onClick={fetchTrainees}
               title={t.refresh_data}
-              className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+              className="w-9 h-9 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors"
             >
               <RefreshCw size={16} />
             </button>
             <LanguageSelector />
             <button
               onClick={onSignOut}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
             >
               <LogOut size={15} />
               {t.sign_out}
@@ -114,7 +114,7 @@ export function TrainerDashboard({ onSignOut }: { onSignOut: () => void }) {
       </header>
 
       <div className="flex-1 flex">
-        <aside className="w-64 bg-white border-r border-gray-200 overflow-y-auto sticky top-0">
+        <aside className="w-64 bg-[#0F172A] border-r border-slate-800 overflow-y-auto sticky top-0">
           <nav className="p-4 space-y-2">
             {tabs.map((tab) => {
               const isActive = activeTab === tab.id;
@@ -125,15 +125,15 @@ export function TrainerDashboard({ onSignOut }: { onSignOut: () => void }) {
                   className={`w-full flex items-start gap-3 px-4 py-3 rounded-lg text-start transition-all ${
                     isActive
                       ? 'bg-amber-600 text-white shadow-sm'
-                      : 'text-gray-700 hover:bg-gray-50'
+                      : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
                   }`}
                 >
-                  <div className={`shrink-0 mt-0.5 ${isActive ? 'text-white' : 'text-gray-400'}`}>
+                  <div className={`shrink-0 mt-0.5 ${isActive ? 'text-white' : 'text-slate-400'}`}>
                     {tab.icon}
                   </div>
                   <p
                     className={`text-sm font-semibold leading-snug ${
-                      isActive ? 'text-white' : 'text-gray-800'
+                      isActive ? 'text-white' : 'text-slate-400'
                     }`}
                   >
                     {tab.label}
@@ -144,10 +144,10 @@ export function TrainerDashboard({ onSignOut }: { onSignOut: () => void }) {
           </nav>
         </aside>
 
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto bg-[#0F172A]">
           <div className="max-w-6xl mx-auto px-6 py-8">
             {error && (
-              <div className="mb-6 px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+              <div className="mb-6 px-4 py-3 bg-red-950/30 border border-red-900/50 rounded-lg text-red-400 text-sm">
                 {error}
               </div>
             )}
@@ -259,12 +259,12 @@ function TrainerDashboardTab({ trainees, loading }: { trainees: Profile[]; loadi
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-1">{t.dashboard}</h1>
-          <p className="text-gray-500">{t.trainer_desc}</p>
+          <h1 className="text-3xl font-bold text-white mb-1">{t.dashboard}</h1>
+          <p className="text-slate-400">{t.trainer_desc}</p>
         </div>
         <button
           onClick={fetchStats}
-          className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors"
+          className="flex items-center gap-2 px-3 py-2 text-sm text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg border border-slate-700 transition-colors"
         >
           <RefreshCw size={14} />
           Refresh
@@ -275,26 +275,26 @@ function TrainerDashboardTab({ trainees, loading }: { trainees: Profile[]; loadi
         <StatCard
           label={t.assigned_trainees}
           value={trainees.length}
-          icon={<Users className="text-blue-600" size={24} />}
-          bg="bg-blue-50"
+          icon={<Users className="text-blue-400" size={24} />}
+          bg="bg-blue-900/20"
         />
         <StatCard
           label="Reviewed Tasks"
           value={statsLoading ? '…' : stats.reviewedCount}
-          icon={<ClipboardCheck className="text-green-600" size={24} />}
-          bg="bg-green-50"
+          icon={<ClipboardCheck className="text-green-400" size={24} />}
+          bg="bg-green-900/20"
         />
         <StatCard
           label={t.avg_score}
           value={statsLoading ? '…' : stats.avgScore !== null ? `${stats.avgScore}%` : '—'}
-          icon={<TrendingUp className="text-amber-600" size={24} />}
-          bg="bg-amber-50"
+          icon={<TrendingUp className="text-amber-400" size={24} />}
+          bg="bg-amber-900/20"
         />
         <StatCard
           label="Passed Tasks"
           value={statsLoading ? '…' : stats.passedCount}
-          icon={<MessageSquare className="text-emerald-600" size={24} />}
-          bg="bg-emerald-50"
+          icon={<MessageSquare className="text-emerald-400" size={24} />}
+          bg="bg-emerald-900/20"
         />
       </div>
 
@@ -302,35 +302,35 @@ function TrainerDashboardTab({ trainees, loading }: { trainees: Profile[]; loadi
 
       {/* Recent reviews table */}
       {!statsLoading && stats.recentReviews.length > 0 && (
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <div className="flex items-center gap-2 px-6 py-4 border-b border-gray-100 bg-gray-50">
-            <ClipboardCheck size={16} className="text-gray-500" />
-            <h2 className="font-semibold text-gray-800 text-sm">Recent Reviews</h2>
+        <div className="bg-[#1E293B] rounded-xl border border-slate-700/60 overflow-hidden">
+          <div className="flex items-center gap-2 px-6 py-4 border-b border-slate-700/60 bg-slate-900/50">
+            <ClipboardCheck size={16} className="text-slate-400" />
+            <h2 className="font-semibold text-white text-sm">Recent Reviews</h2>
           </div>
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-slate-700/60">
             {stats.recentReviews.map((r, i) => (
-              <div key={i} className="px-6 py-3 flex items-center gap-4 hover:bg-gray-50">
-                <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
-                  <span className="text-amber-700 font-bold text-xs">
+              <div key={i} className="px-6 py-3 flex items-center gap-4 hover:bg-slate-800/30">
+                <div className="w-8 h-8 rounded-full bg-amber-600/30 flex items-center justify-center shrink-0">
+                  <span className="text-amber-400 font-bold text-xs">
                     {r.trainee_name.charAt(0).toUpperCase()}
                   </span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">{r.trainee_name}</p>
-                  <p className="text-xs text-gray-500 truncate">{r.task_title}</p>
+                  <p className="text-sm font-medium text-white truncate">{r.trainee_name}</p>
+                  <p className="text-xs text-slate-500 truncate">{r.task_title}</p>
                 </div>
                 <div className="flex items-center gap-3 shrink-0">
                   {r.score !== null && (
-                    <span className={`text-sm font-bold ${r.score >= 60 ? 'text-green-600' : 'text-red-500'}`}>
+                    <span className={`text-sm font-bold ${r.score >= 60 ? 'text-green-400' : 'text-red-400'}`}>
                       {r.score}/100
                     </span>
                   )}
                   <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                    r.passed ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'
+                    r.passed ? 'bg-green-900/40 text-green-300' : 'bg-red-900/40 text-red-300'
                   }`}>
                     {r.passed ? 'Passed' : 'Failed'}
                   </span>
-                  <span className="text-xs text-gray-400">
+                  <span className="text-xs text-slate-500">
                     {new Date(r.reviewed_at).toLocaleDateString()}
                   </span>
                 </div>
@@ -355,11 +355,11 @@ function StatCard({
   bg: string;
 }) {
   return (
-    <div className={`${bg} border border-gray-200 rounded-xl p-6 flex items-start gap-4`}>
-      <div className="shrink-0 p-3 bg-white rounded-lg">{icon}</div>
+    <div className={`${bg} border border-slate-700/60 rounded-xl p-6 flex items-start gap-4`}>
+      <div className="shrink-0 p-3 bg-[#0F172A] rounded-lg">{icon}</div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-gray-600 mb-1">{label}</p>
-        <p className="text-2xl font-bold text-gray-900">{value}</p>
+        <p className="text-sm font-medium text-slate-400 mb-1">{label}</p>
+        <p className="text-2xl font-bold text-white">{value}</p>
       </div>
     </div>
   );
@@ -369,36 +369,36 @@ function RecentTraineesCard({ trainees, loading }: { trainees: Profile[]; loadin
   const { t } = useLanguage();
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-      <div className="flex items-center gap-2 px-6 py-4 border-b border-gray-100 bg-gray-50">
-        <Users size={16} className="text-gray-500" />
-        <h2 className="font-semibold text-gray-800 text-sm">{t.assigned_trainees}</h2>
+    <div className="bg-[#1E293B] rounded-xl border border-slate-700/60 overflow-hidden">
+      <div className="flex items-center gap-2 px-6 py-4 border-b border-slate-700/60 bg-slate-900/50">
+        <Users size={16} className="text-slate-400" />
+        <h2 className="font-semibold text-white text-sm">{t.assigned_trainees}</h2>
       </div>
 
       {loading ? (
         <div className="flex items-center justify-center py-12">
-          <RefreshCw size={24} className="animate-spin text-gray-400" />
+          <RefreshCw size={24} className="animate-spin text-slate-500" />
         </div>
       ) : trainees.length === 0 ? (
-        <div className="px-6 py-12 text-center text-gray-400 text-sm">{t.no_trainees}</div>
+        <div className="px-6 py-12 text-center text-slate-500 text-sm">{t.no_trainees}</div>
       ) : (
-        <div className="divide-y divide-gray-100">
+        <div className="divide-y divide-slate-700/60">
           {trainees.slice(0, 5).map((trainee) => (
             <div
               key={trainee.id}
-              className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+              className="px-6 py-4 flex items-center justify-between hover:bg-slate-800/30 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
-                  <span className="text-amber-700 font-bold text-sm">
+                <div className="w-10 h-10 rounded-full bg-amber-600/30 flex items-center justify-center shrink-0">
+                  <span className="text-amber-400 font-bold text-sm">
                     {trainee.full_name?.charAt(0)?.toUpperCase() || '?'}
                   </span>
                 </div>
                 <div className="min-w-0">
-                  <p className="font-medium text-gray-900 text-sm truncate">
+                  <p className="font-medium text-white text-sm truncate">
                     {trainee.full_name || trainee.email}
                   </p>
-                  <p className="text-xs text-gray-500">{trainee.email}</p>
+                  <p className="text-xs text-slate-500">{trainee.email}</p>
                 </div>
               </div>
             </div>
@@ -488,59 +488,59 @@ function AssignedTraineesTab({
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">{t.assigned_trainees}</h1>
-          <p className="text-gray-500 mt-1">{t.manage_trainees}</p>
+          <h1 className="text-3xl font-bold text-white">{t.assigned_trainees}</h1>
+          <p className="text-slate-400 mt-1">{t.manage_trainees}</p>
         </div>
         <button
           onClick={() => setShowAssignModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors font-medium text-sm"
+          className="flex items-center gap-2 px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-500 transition-colors font-medium text-sm"
         >
           <Plus size={16} />
           {t.assign_trainee}
         </button>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="flex items-center gap-2 px-6 py-4 border-b border-gray-100 bg-gray-50">
-          <Users size={16} className="text-gray-500" />
-          <h2 className="font-semibold text-gray-800 text-sm">
+      <div className="bg-[#1E293B] rounded-xl border border-slate-700/60 overflow-hidden">
+        <div className="flex items-center gap-2 px-6 py-4 border-b border-slate-700/60 bg-slate-900/50">
+          <Users size={16} className="text-slate-400" />
+          <h2 className="font-semibold text-white text-sm">
             {t.assigned_trainees} ({trainees.length})
           </h2>
         </div>
 
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <RefreshCw size={24} className="animate-spin text-gray-400" />
+            <RefreshCw size={24} className="animate-spin text-slate-500" />
           </div>
         ) : trainees.length === 0 ? (
           <div className="px-6 py-12 text-center">
-            <Users size={48} className="text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-600 font-medium">{t.no_trainees}</p>
-            <p className="text-gray-400 text-sm mt-1">{t.assign_first_trainee}</p>
+            <Users size={48} className="text-slate-700 mx-auto mb-4" />
+            <p className="text-white font-medium">{t.no_trainees}</p>
+            <p className="text-slate-500 text-sm mt-1">{t.assign_first_trainee}</p>
           </div>
         ) : (
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-slate-700/60">
             {trainees.map((trainee) => (
               <div
                 key={trainee.id}
-                className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                className="px-6 py-4 flex items-center justify-between hover:bg-slate-800/30 transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
-                    <span className="text-blue-700 font-bold text-sm">
+                  <div className="w-10 h-10 rounded-full bg-blue-600/30 flex items-center justify-center shrink-0">
+                    <span className="text-blue-400 font-bold text-sm">
                       {trainee.full_name?.charAt(0)?.toUpperCase() || '?'}
                     </span>
                   </div>
                   <div className="min-w-0">
-                    <p className="font-medium text-gray-900 truncate">
+                    <p className="font-medium text-white truncate">
                       {trainee.full_name || trainee.email}
                     </p>
-                    <p className="text-xs text-gray-500">{trainee.email}</p>
+                    <p className="text-xs text-slate-500">{trainee.email}</p>
                   </div>
                 </div>
                 <button
                   onClick={() => handleUnassign(trainee.id)}
-                  className="text-xs px-3 py-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors font-medium"
+                  className="text-xs px-3 py-1.5 text-red-400 hover:bg-red-900/30 rounded-lg transition-colors font-medium"
                 >
                   {t.unassign_trainee}
                 </button>
@@ -551,13 +551,13 @@ function AssignedTraineesTab({
       </div>
 
       {showAssignModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-gray-900">{t.assign_trainee}</h2>
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-[#1E293B] rounded-2xl shadow-xl w-full max-w-md border border-slate-700/60">
+            <div className="flex items-center justify-between p-6 border-b border-slate-700/60">
+              <h2 className="text-xl font-bold text-white">{t.assign_trainee}</h2>
               <button
                 onClick={() => setShowAssignModal(false)}
-                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition-colors"
               >
                 <X size={20} />
               </button>
@@ -569,29 +569,29 @@ function AssignedTraineesTab({
                 value={searchEmail}
                 onChange={(e) => setSearchEmail(e.target.value)}
                 placeholder={t.search || 'Search by name or email...'}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none mb-4"
+                className="w-full px-3 py-2 border border-slate-700 bg-[#0F172A] rounded-lg focus:ring-2 focus:ring-amber-600 focus:border-amber-600 outline-none text-white mb-4"
               />
 
               {availableTrainees.length === 0 ? (
-                <p className="text-center text-gray-400 py-4">{t.no_trainees}</p>
+                <p className="text-center text-slate-500 py-4">{t.no_trainees}</p>
               ) : (
                 <div className="max-h-64 overflow-y-auto space-y-2">
                   {availableTrainees.map((trainee) => (
                     <button
                       key={trainee.id}
                       onClick={() => handleAssign(trainee.id)}
-                      className="w-full flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-amber-50 hover:border-amber-300 transition-colors text-left"
+                      className="w-full flex items-center gap-3 p-3 border border-slate-700 bg-slate-900/30 rounded-lg hover:bg-amber-600/20 hover:border-amber-600/50 transition-colors text-left"
                     >
-                      <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
-                        <span className="text-amber-700 font-bold text-xs">
+                      <div className="w-8 h-8 rounded-full bg-amber-600/30 flex items-center justify-center shrink-0">
+                        <span className="text-amber-400 font-bold text-xs">
                           {trainee.full_name?.charAt(0)?.toUpperCase() || '?'}
                         </span>
                       </div>
                       <div className="min-w-0">
-                        <p className="font-medium text-gray-900 text-sm truncate">
+                        <p className="font-medium text-white text-sm truncate">
                           {trainee.full_name || trainee.email}
                         </p>
-                        <p className="text-xs text-gray-500">{trainee.email}</p>
+                        <p className="text-xs text-slate-500">{trainee.email}</p>
                       </div>
                     </button>
                   ))}
@@ -670,46 +670,46 @@ function TrainerFeedbackTab({ trainees }: { trainees: Profile[] }) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">{t.feedback}</h1>
-          <p className="text-gray-500 mt-1">{t.manage_feedback}</p>
+          <h1 className="text-3xl font-bold text-white">{t.feedback}</h1>
+          <p className="text-slate-400 mt-1">{t.manage_feedback}</p>
         </div>
       </div>
 
       {trainees.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
-          <MessageSquare size={48} className="text-gray-300 mx-auto mb-4" />
-          <p className="text-gray-600 font-medium">{t.no_feedback}</p>
-          <p className="text-gray-400 text-sm mt-1">{t.assign_trainee_first}</p>
+        <div className="bg-[#1E293B] rounded-xl border border-slate-700/60 p-12 text-center">
+          <MessageSquare size={48} className="text-slate-700 mx-auto mb-4" />
+          <p className="text-white font-medium">{t.no_feedback}</p>
+          <p className="text-slate-500 text-sm mt-1">{t.assign_trainee_first}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Trainees to give feedback */}
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-100 bg-gray-50">
-              <h2 className="font-semibold text-gray-800 text-sm">{t.add_feedback}</h2>
+          <div className="bg-[#1E293B] rounded-xl border border-slate-700/60 overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-700/60 bg-slate-900/50">
+              <h2 className="font-semibold text-white text-sm">{t.add_feedback}</h2>
             </div>
-            <div className="divide-y divide-gray-100">
+            <div className="divide-y divide-slate-700/60">
               {trainees.map((trainee) => (
                 <div
                   key={trainee.id}
-                  className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                  className="px-6 py-4 flex items-center justify-between hover:bg-slate-800/30 transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
-                      <span className="text-amber-700 font-bold text-sm">
+                    <div className="w-10 h-10 rounded-full bg-amber-600/30 flex items-center justify-center shrink-0">
+                      <span className="text-amber-400 font-bold text-sm">
                         {trainee.full_name?.charAt(0)?.toUpperCase() || '?'}
                       </span>
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900 text-sm">
+                      <p className="font-medium text-white text-sm">
                         {trainee.full_name || trainee.email}
                       </p>
-                      <p className="text-xs text-gray-500">{trainee.email}</p>
+                      <p className="text-xs text-slate-500">{trainee.email}</p>
                     </div>
                   </div>
                   <button
                     onClick={() => openFeedbackModal(trainee)}
-                    className="flex items-center gap-1 px-3 py-1.5 text-amber-600 hover:bg-amber-50 rounded-lg transition-colors text-sm font-medium"
+                    className="flex items-center gap-1 px-3 py-1.5 text-amber-400 hover:bg-amber-600/20 rounded-lg transition-colors text-sm font-medium"
                   >
                     <Plus size={14} />
                     {t.add_feedback}
@@ -720,32 +720,32 @@ function TrainerFeedbackTab({ trainees }: { trainees: Profile[] }) {
           </div>
 
           {/* Recent feedback */}
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-100 bg-gray-50">
-              <h2 className="font-semibold text-gray-800 text-sm">{t.recent_feedback}</h2>
+          <div className="bg-[#1E293B] rounded-xl border border-slate-700/60 overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-700/60 bg-slate-900/50">
+              <h2 className="font-semibold text-white text-sm">{t.recent_feedback}</h2>
             </div>
             {feedbackList.length === 0 ? (
-              <div className="px-6 py-8 text-center text-gray-400 text-sm">{t.no_feedback_yet}</div>
+              <div className="px-6 py-8 text-center text-slate-500 text-sm">{t.no_feedback_yet}</div>
             ) : (
-              <div className="divide-y divide-gray-100 max-h-96 overflow-y-auto">
+              <div className="divide-y divide-slate-700/60 max-h-96 overflow-y-auto">
                 {feedbackList.map((fb) => (
                   <div key={fb.id} className="px-6 py-4">
                     <div className="flex items-start gap-3">
-                      <div className="flex items-center gap-1 text-amber-500">
+                      <div className="flex items-center gap-1 text-amber-400">
                         {[1, 2, 3, 4, 5].map((i) => (
-                          <span key={i} className={i <= fb.rating ? 'text-amber-500' : 'text-gray-300'}>
+                          <span key={i} className={i <= fb.rating ? 'text-amber-400' : 'text-slate-700'}>
                             ★
                           </span>
                         ))}
                       </div>
                       {fb.topic && (
-                        <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full">
+                        <span className="px-2 py-0.5 bg-slate-800 text-slate-300 text-xs rounded-full">
                           {fb.topic}
                         </span>
                       )}
                     </div>
-                    <p className="text-sm text-gray-700 mt-2">{fb.feedback_text}</p>
-                    <p className="text-xs text-gray-400 mt-2">
+                    <p className="text-sm text-slate-300 mt-2">{fb.feedback_text}</p>
+                    <p className="text-xs text-slate-500 mt-2">
                       {new Date(fb.created_at).toLocaleDateString()}
                     </p>
                   </div>
@@ -757,16 +757,16 @@ function TrainerFeedbackTab({ trainees }: { trainees: Profile[] }) {
       )}
 
       {showModal && selectedTrainee && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md">
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-[#1E293B] rounded-2xl shadow-xl w-full max-w-md border border-slate-700/60">
+            <div className="flex items-center justify-between p-6 border-b border-slate-700/60">
               <div>
-                <h2 className="text-xl font-bold text-gray-900">{t.add_feedback}</h2>
-                <p className="text-sm text-gray-500">{selectedTrainee.full_name || selectedTrainee.email}</p>
+                <h2 className="text-xl font-bold text-white">{t.add_feedback}</h2>
+                <p className="text-sm text-slate-400">{selectedTrainee.full_name || selectedTrainee.email}</p>
               </div>
               <button
                 onClick={() => setShowModal(false)}
-                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition-colors"
               >
                 <X size={20} />
               </button>
@@ -774,14 +774,14 @@ function TrainerFeedbackTab({ trainees }: { trainees: Profile[] }) {
 
             <div className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t.rating}</label>
+                <label className="block text-sm font-medium text-white mb-1">{t.rating}</label>
                 <div className="flex gap-2">
                   {[1, 2, 3, 4, 5].map((i) => (
                     <button
                       key={i}
                       onClick={() => setRating(i)}
                       className={`text-2xl transition-colors ${
-                        i <= rating ? 'text-amber-500' : 'text-gray-300'
+                        i <= rating ? 'text-amber-400' : 'text-slate-700'
                       }`}
                     >
                       ★
@@ -791,7 +791,7 @@ function TrainerFeedbackTab({ trainees }: { trainees: Profile[] }) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white mb-1">
                   {t.topic} ({t.optional || 'optional'})
                 </label>
                 <input
@@ -799,35 +799,35 @@ function TrainerFeedbackTab({ trainees }: { trainees: Profile[] }) {
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
                   placeholder="e.g., Communication, Technical Skills..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
+                  className="w-full px-3 py-2 border border-slate-700 bg-[#0F172A] rounded-lg focus:ring-2 focus:ring-amber-600 focus:border-amber-600 outline-none text-white"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-white mb-1">
                   {t.feedback_text}
                 </label>
                 <textarea
                   value={feedbackText}
                   onChange={(e) => setFeedbackText(e.target.value)}
                   rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
+                  className="w-full px-3 py-2 border border-slate-700 bg-[#0F172A] rounded-lg focus:ring-2 focus:ring-amber-600 focus:border-amber-600 outline-none text-white"
                   placeholder="Write your feedback..."
                 />
               </div>
             </div>
 
-            <div className="flex gap-3 p-6 border-t border-gray-200">
+            <div className="flex gap-3 p-6 border-t border-slate-700/60">
               <button
                 onClick={() => setShowModal(false)}
-                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                className="flex-1 px-4 py-2 border border-slate-700 text-slate-400 rounded-lg hover:bg-slate-800 hover:text-slate-200 transition-colors font-medium"
               >
                 {t.cancel || 'Cancel'}
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={saving || !feedbackText.trim()}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
               >
                 {saving ? (
                   <RefreshCw size={16} className="animate-spin" />

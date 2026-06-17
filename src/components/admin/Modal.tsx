@@ -25,12 +25,12 @@ export function Modal({ title, onClose, children }: ModalProps) {
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in"
       onClick={(e) => { if (e.target === overlayRef.current) onClose(); }}
     >
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
-        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
-          <h2 className="text-lg font-bold text-gray-900">{title}</h2>
+      <div className="bg-[#1E293B] rounded-2xl shadow-2xl shadow-black/60 w-full max-w-lg overflow-hidden">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-700/60">
+          <h2 className="text-lg font-bold text-white">{title}</h2>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-500 hover:text-slate-200 hover:bg-slate-700 transition-colors"
           >
             <X size={18} />
           </button>
@@ -54,17 +54,17 @@ export function ConfirmModal({ title, message, confirmLabel, onConfirm, onClose,
   const { t } = useLanguage();
   return (
     <Modal title={title} onClose={onClose}>
-      <p className="text-gray-600 text-sm leading-relaxed mb-6">{message}</p>
+      <p className="text-slate-400 text-sm leading-relaxed mb-6">{message}</p>
       <div className="flex gap-3">
         <button
           onClick={onClose}
-          className="flex-1 py-2.5 border border-gray-200 text-gray-700 rounded-lg font-semibold text-sm hover:bg-gray-50 transition-colors"
+          className="flex-1 py-2.5 border border-slate-700 text-slate-300 rounded-lg font-semibold text-sm hover:bg-slate-700 transition-colors"
         >
           {t.cancel}
         </button>
         <button
           onClick={onConfirm}
-          className={`flex-1 py-2.5 rounded-lg font-semibold text-sm text-white transition-colors ${danger ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-600 hover:bg-blue-700'}`}
+          className={`flex-1 py-2.5 rounded-lg font-semibold text-sm text-white transition-colors ${danger ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-600 hover:bg-blue-500'}`}
         >
           {confirmLabel ?? t.delete_confirm}
         </button>

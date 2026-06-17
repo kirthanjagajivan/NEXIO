@@ -179,17 +179,17 @@ export function PracticalTasksTab() {
   };
 
   const difficultyBadge: Record<string, string> = {
-    beginner: 'bg-green-100 text-green-700',
-    intermediate: 'bg-amber-100 text-amber-700',
-    advanced: 'bg-red-100 text-red-700',
+    beginner: 'bg-green-500/20 text-green-400',
+    intermediate: 'bg-amber-500/20 text-amber-400',
+    advanced: 'bg-red-500/20 text-red-400',
   };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">{t.practical_tasks}</h1>
-          <p className="text-gray-500 mt-1">{t.manage_practical_tasks}</p>
+          <h1 className="text-3xl font-bold text-white">{t.practical_tasks}</h1>
+          <p className="text-slate-400 mt-1">{t.manage_practical_tasks}</p>
         </div>
         <button
           onClick={openCreate}
@@ -202,15 +202,15 @@ export function PracticalTasksTab() {
 
       {loading ? (
         <div className="flex items-center justify-center py-16">
-          <Loader2 size={28} className="animate-spin text-gray-300" />
+          <Loader2 size={28} className="animate-spin text-slate-500" />
         </div>
       ) : tasks.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-gray-200 p-16 text-center">
-          <div className="w-16 h-16 rounded-2xl bg-amber-50 flex items-center justify-center mx-auto mb-4">
+        <div className="bg-[#1E293B] rounded-2xl border border-slate-700/60 p-16 text-center">
+          <div className="w-16 h-16 rounded-2xl bg-amber-500/10 flex items-center justify-center mx-auto mb-4">
             <BookOpen size={32} className="text-amber-400" />
           </div>
-          <p className="text-gray-600 font-semibold text-lg">{t.no_tasks}</p>
-          <p className="text-gray-400 text-sm mt-1">{t.create_first_task}</p>
+          <p className="text-slate-300 font-semibold text-lg">{t.no_tasks}</p>
+          <p className="text-slate-500 text-sm mt-1">{t.create_first_task}</p>
           <button
             onClick={openCreate}
             className="mt-5 inline-flex items-center gap-2 px-4 py-2 bg-amber-600 text-white rounded-lg text-sm font-medium hover:bg-amber-700 transition-colors"
@@ -278,27 +278,27 @@ function TaskCard({
   }, [task.id]);
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-sm transition-shadow">
+    <div className="bg-[#1E293B] rounded-xl border border-slate-700/60 overflow-hidden hover:border-slate-600 transition-colors">
       <div className="px-6 py-4 flex items-start gap-4">
-        <div className="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center shrink-0 mt-0.5">
-          <BookOpen size={20} className="text-amber-600" />
+        <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0 mt-0.5">
+          <BookOpen size={20} className="text-amber-400" />
         </div>
 
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <h3 className="font-semibold text-gray-900">{task.title}</h3>
-                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${difficultyBadge[task.difficulty] ?? 'bg-gray-100 text-gray-600'}`}>
+                <h3 className="font-semibold text-white">{task.title}</h3>
+                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${difficultyBadge[task.difficulty] ?? 'bg-slate-700 text-slate-400'}`}>
                   {task.difficulty}
                 </span>
                 {!task.is_published && (
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-slate-700 text-slate-400">
                     Draft
                   </span>
                 )}
               </div>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-slate-500 mt-1">
                 {task.estimated_duration_minutes} {t.minutes}
                 {task.attachments?.length > 0 && ` · ${task.attachments.length} file${task.attachments.length !== 1 ? 's' : ''}`}
                 {submissionCount !== null && ` · ${submissionCount} submission${submissionCount !== 1 ? 's' : ''}`}
@@ -308,20 +308,20 @@ function TaskCard({
             <div className="flex items-center gap-1 shrink-0">
               <button
                 onClick={onToggle}
-                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 text-slate-500 hover:text-slate-300 hover:bg-slate-700 rounded-lg transition-colors"
                 title="View details"
               >
                 {expanded ? <ChevronUp size={16} /> : <Eye size={16} />}
               </button>
               <button
                 onClick={onEdit}
-                className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                className="p-2 text-slate-500 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
               >
                 <Edit2 size={16} />
               </button>
               <button
                 onClick={onDelete}
-                className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                className="p-2 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
               >
                 <Trash2 size={16} />
               </button>
@@ -329,30 +329,30 @@ function TaskCard({
           </div>
 
           {task.description && !expanded && (
-            <p className="text-sm text-gray-600 mt-2 line-clamp-1">{task.description}</p>
+            <p className="text-sm text-slate-400 mt-2 line-clamp-1">{task.description}</p>
           )}
         </div>
       </div>
 
       {expanded && (
-        <div className="px-6 pb-5 pt-0 border-t border-gray-100 bg-gray-50/50 space-y-4">
+        <div className="px-6 pb-5 pt-0 border-t border-slate-700/60 bg-slate-900/30 space-y-4">
           {task.description && (
             <div>
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Description</p>
-              <p className="text-sm text-gray-700">{task.description}</p>
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Description</p>
+              <p className="text-sm text-slate-300">{task.description}</p>
             </div>
           )}
 
           {task.instructions && (
             <div>
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">{t.task_instructions}</p>
-              <p className="text-sm text-gray-700 whitespace-pre-line">{task.instructions}</p>
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">{t.task_instructions}</p>
+              <p className="text-sm text-slate-300 whitespace-pre-line">{task.instructions}</p>
             </div>
           )}
 
           {task.attachments?.length > 0 && (
             <div>
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">{t.attachments}</p>
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">{t.attachments}</p>
               <div className="flex flex-wrap gap-2">
                 {task.attachments.map((att, i) => (
                   <AttachmentChip key={i} attachment={att} bucket="task-attachments" />
@@ -371,12 +371,12 @@ export function AttachmentChip({ attachment, bucket }: { attachment: FileAttachm
   const url = bucket === 'task-attachments' ? getTaskAttachmentUrl(attachment.path) : null;
 
   const content = (
-    <div className="flex items-center gap-2 px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm hover:border-amber-300 hover:bg-amber-50 transition-colors cursor-pointer">
+    <div className="flex items-center gap-2 px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm hover:border-amber-500/50 hover:bg-amber-500/10 transition-colors cursor-pointer">
       {icon === 'pdf' && <FileText size={14} className="text-red-500 shrink-0" />}
       {icon === 'image' && <ImageIcon size={14} className="text-blue-500 shrink-0" />}
-      {(icon === 'doc' || icon === 'txt') && <FileIcon size={14} className="text-gray-500 shrink-0" />}
-      <span className="text-gray-700 max-w-[160px] truncate">{attachment.name}</span>
-      <span className="text-gray-400 text-xs shrink-0">{formatFileSize(attachment.size)}</span>
+      {(icon === 'doc' || icon === 'txt') && <FileIcon size={14} className="text-slate-500 shrink-0" />}
+      <span className="text-slate-300 max-w-[160px] truncate">{attachment.name}</span>
+      <span className="text-slate-500 text-xs shrink-0">{formatFileSize(attachment.size)}</span>
     </div>
   );
 
@@ -409,16 +409,16 @@ function TaskModal({
   const allFileCount = existingAttachments.length + pendingFiles.length;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[92vh] flex flex-col">
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+      <div className="bg-[#1E293B] rounded-2xl shadow-2xl w-full max-w-2xl max-h-[92vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200 shrink-0">
-          <h2 className="text-xl font-bold text-gray-900">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-700/60 shrink-0">
+          <h2 className="text-xl font-bold text-white">
             {editing ? t.edit_task : t.create_task}
           </h2>
           <button
             onClick={onClose}
-            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 text-slate-500 hover:text-slate-200 hover:bg-slate-700 rounded-lg transition-colors"
           >
             <X size={20} />
           </button>
@@ -428,36 +428,36 @@ function TaskModal({
         <div className="flex-1 overflow-y-auto px-6 py-5 space-y-5">
           {/* Title */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t.task_title} *</label>
+            <label className="block text-sm font-semibold text-slate-300 mb-1.5">{t.task_title} *</label>
             <input
               type="text"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none text-sm"
+              className="w-full px-3.5 py-2.5 bg-[#0F172A] border border-slate-700 text-white placeholder:text-slate-500 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none text-sm"
               placeholder="e.g. Machine Safety Inspection Checklist"
             />
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t.task_description}</label>
+            <label className="block text-sm font-semibold text-slate-300 mb-1.5">{t.task_description}</label>
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               rows={2}
-              className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none text-sm resize-none"
+              className="w-full px-3.5 py-2.5 bg-[#0F172A] border border-slate-700 text-white placeholder:text-slate-500 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none text-sm resize-none"
               placeholder="Brief overview of what trainees will learn or do…"
             />
           </div>
 
           {/* Instructions */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t.task_instructions}</label>
+            <label className="block text-sm font-semibold text-slate-300 mb-1.5">{t.task_instructions}</label>
             <textarea
               value={formData.instructions}
               onChange={(e) => setFormData({ ...formData, instructions: e.target.value })}
               rows={5}
-              className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none text-sm"
+              className="w-full px-3.5 py-2.5 bg-[#0F172A] border border-slate-700 text-white placeholder:text-slate-500 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none text-sm"
               placeholder="Step-by-step instructions, safety guidelines, expected outcomes…"
             />
           </div>
@@ -465,11 +465,11 @@ function TaskModal({
           {/* Difficulty + Duration */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t.difficulty_level}</label>
+              <label className="block text-sm font-semibold text-slate-300 mb-1.5">{t.difficulty_level}</label>
               <select
                 value={formData.difficulty}
                 onChange={(e) => setFormData({ ...formData, difficulty: e.target.value })}
-                className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none text-sm"
+                className="w-full px-3.5 py-2.5 bg-[#0F172A] border border-slate-700 text-white rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none text-sm"
               >
                 <option value="beginner">{t.beginner}</option>
                 <option value="intermediate">{t.intermediate}</option>
@@ -477,14 +477,14 @@ function TaskModal({
               </select>
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">{t.estimated_duration} ({t.minutes})</label>
+              <label className="block text-sm font-semibold text-slate-300 mb-1.5">{t.estimated_duration} ({t.minutes})</label>
               <input
                 type="number"
                 value={formData.estimated_duration_minutes}
                 onChange={(e) => setFormData({ ...formData, estimated_duration_minutes: Math.max(5, parseInt(e.target.value) || 5) })}
                 min={5}
                 max={480}
-                className="w-full px-3.5 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none text-sm"
+                className="w-full px-3.5 py-2.5 bg-[#0F172A] border border-slate-700 text-white placeholder:text-slate-500 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none text-sm"
               />
             </div>
           </div>
@@ -494,21 +494,21 @@ function TaskModal({
             <button
               type="button"
               onClick={() => setFormData({ ...formData, is_published: !formData.is_published })}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${formData.is_published ? 'bg-amber-500' : 'bg-gray-200'}`}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${formData.is_published ? 'bg-amber-500' : 'bg-slate-700'}`}
             >
               <span
                 className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${formData.is_published ? 'translate-x-6' : 'translate-x-1'}`}
               />
             </button>
-            <span className="text-sm font-medium text-gray-700">
+            <span className="text-sm font-medium text-slate-300">
               {formData.is_published ? t.published || 'Published — visible to trainees' : t.draft || 'Draft — hidden from trainees'}
             </span>
           </div>
 
           {/* File Attachments */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              {t.attachments} {allFileCount > 0 && <span className="text-gray-400 font-normal">({allFileCount})</span>}
+            <label className="block text-sm font-semibold text-slate-300 mb-2">
+              {t.attachments} {allFileCount > 0 && <span className="text-slate-500 font-normal">({allFileCount})</span>}
             </label>
 
             {/* Existing files */}
@@ -533,7 +533,7 @@ function TaskModal({
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="w-full flex flex-col items-center gap-2 p-5 border-2 border-dashed border-gray-200 rounded-xl text-gray-400 hover:border-amber-400 hover:text-amber-600 hover:bg-amber-50 transition-colors"
+              className="w-full flex flex-col items-center gap-2 p-5 border-2 border-dashed border-slate-700 rounded-xl text-slate-500 hover:border-amber-500/60 hover:text-amber-400 hover:bg-amber-500/10 transition-colors"
             >
               <Upload size={22} />
               <span className="text-sm font-medium">{t.upload_files || 'Click to upload files'}</span>
@@ -551,9 +551,9 @@ function TaskModal({
         </div>
 
         {/* Footer */}
-        <div className="flex gap-3 px-6 py-4 border-t border-gray-200 shrink-0">
+        <div className="flex gap-3 px-6 py-4 border-t border-slate-700/60 shrink-0">
           {uploadProgress && (
-            <p className="flex-1 text-xs text-gray-500 flex items-center gap-2">
+            <p className="flex-1 text-xs text-slate-500 flex items-center gap-2">
               <Loader2 size={12} className="animate-spin" />
               {uploadProgress}
             </p>
@@ -561,7 +561,7 @@ function TaskModal({
           {!uploadProgress && <span className="flex-1" />}
           <button
             onClick={onClose}
-            className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm"
+            className="px-4 py-2 border border-slate-700 text-slate-300 rounded-lg hover:bg-slate-700 transition-colors font-medium text-sm"
           >
             {t.cancel}
           </button>
@@ -583,18 +583,18 @@ function ExistingFileRow({ attachment, onRemove }: { attachment: FileAttachment;
   const icon = getFileIcon(attachment.type);
   const url = getTaskAttachmentUrl(attachment.path);
   return (
-    <div className="flex items-center gap-3 px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg">
+    <div className="flex items-center gap-3 px-3 py-2.5 bg-slate-800 border border-slate-700 rounded-lg">
       {icon === 'pdf' && <FileText size={16} className="text-red-500 shrink-0" />}
       {icon === 'image' && <ImageIcon size={16} className="text-blue-500 shrink-0" />}
-      {(icon === 'doc' || icon === 'txt') && <FileIcon size={16} className="text-gray-400 shrink-0" />}
+      {(icon === 'doc' || icon === 'txt') && <FileIcon size={16} className="text-slate-500 shrink-0" />}
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-gray-900 truncate">{attachment.name}</p>
-        <p className="text-xs text-gray-400">{formatFileSize(attachment.size)}</p>
+        <p className="text-sm font-medium text-white truncate">{attachment.name}</p>
+        <p className="text-xs text-slate-500">{formatFileSize(attachment.size)}</p>
       </div>
-      <a href={url} target="_blank" rel="noopener noreferrer" className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors">
+      <a href={url} target="_blank" rel="noopener noreferrer" className="p-1.5 text-slate-500 hover:text-blue-400 hover:bg-blue-500/10 rounded transition-colors">
         <Eye size={14} />
       </a>
-      <button onClick={onRemove} className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors">
+      <button onClick={onRemove} className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors">
         <X size={14} />
       </button>
     </div>
@@ -604,15 +604,15 @@ function ExistingFileRow({ attachment, onRemove }: { attachment: FileAttachment;
 function PendingFileRow({ file, onRemove }: { file: File; onRemove: () => void }) {
   const icon = getFileIcon(file.type);
   return (
-    <div className="flex items-center gap-3 px-3 py-2.5 bg-amber-50 border border-amber-200 rounded-lg">
+    <div className="flex items-center gap-3 px-3 py-2.5 bg-amber-500/10 border border-amber-500/30 rounded-lg">
       {icon === 'pdf' && <FileText size={16} className="text-red-500 shrink-0" />}
       {icon === 'image' && <ImageIcon size={16} className="text-blue-500 shrink-0" />}
-      {(icon === 'doc' || icon === 'txt') && <FileIcon size={16} className="text-gray-400 shrink-0" />}
+      {(icon === 'doc' || icon === 'txt') && <FileIcon size={16} className="text-slate-500 shrink-0" />}
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-gray-900 truncate">{file.name}</p>
-        <p className="text-xs text-amber-600">{formatFileSize(file.size)} · {t_pending()}</p>
+        <p className="text-sm font-medium text-white truncate">{file.name}</p>
+        <p className="text-xs text-amber-400">{formatFileSize(file.size)} · {t_pending()}</p>
       </div>
-      <button onClick={onRemove} className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors">
+      <button onClick={onRemove} className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors">
         <X size={14} />
       </button>
     </div>

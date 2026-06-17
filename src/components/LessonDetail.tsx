@@ -113,7 +113,7 @@ export function LessonDetail({
     <div className={`space-y-4 sm:space-y-6 ${appRTL ? 'text-right' : ''}`}>
       <button
         onClick={onBack}
-        className={`flex items-center gap-2 px-3 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors font-medium text-sm ${
+        className={`flex items-center gap-2 px-3 py-2 text-blue-400 hover:bg-slate-800 rounded-lg transition-colors font-medium text-sm ${
           appRTL ? 'flex-row-reverse' : ''
         }`}
       >
@@ -121,7 +121,7 @@ export function LessonDetail({
         <span>{t.back}</span>
       </button>
 
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+      <div className="bg-[#1E293B] rounded-2xl border border-slate-700/60 shadow-sm overflow-hidden">
         <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-5 sm:px-8 py-7 sm:py-10">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1 min-w-0">
@@ -145,7 +145,7 @@ export function LessonDetail({
               {dropdownOpen && (
                 <>
                   <div className="fixed inset-0 z-10" onClick={() => setDropdownOpen(false)} />
-                  <div className="absolute right-0 top-full mt-2 z-20 bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden w-48 py-1">
+                  <div className="absolute right-0 top-full mt-2 z-20 bg-[#1E293B] border border-slate-700 rounded-xl shadow-xl overflow-hidden w-48 py-1">
                     {LANGUAGES.map((lang) => {
                       const isActive = contentLang === lang.code;
                       const isAvailable = availableLanguages.includes(lang.code);
@@ -154,13 +154,13 @@ export function LessonDetail({
                           key={lang.code}
                           onClick={() => { setContentLang(lang.code); setDropdownOpen(false); }}
                           className={`w-full flex items-center justify-between px-4 py-2.5 text-start text-sm transition-colors ${
-                            isActive ? 'bg-blue-50 text-blue-700 font-semibold' : 'text-gray-700 hover:bg-gray-50'
+                            isActive ? 'bg-blue-500/20 text-blue-300 font-semibold' : 'text-slate-300 hover:bg-slate-700/50'
                           }`}
                         >
                           <span>{lang.nativeLabel}</span>
                           <div className="flex items-center gap-1.5">
                             {isAvailable && <div className="w-1.5 h-1.5 rounded-full bg-green-400" />}
-                            <span className="text-xs text-gray-400 uppercase font-mono">{lang.code}</span>
+                            <span className="text-xs text-slate-500 uppercase font-mono">{lang.code}</span>
                           </div>
                         </button>
                       );
@@ -178,7 +178,7 @@ export function LessonDetail({
               {sections.map((section, si) => (
                 <div key={si} className={si > 0 ? 'mt-8' : ''}>
                   {section.heading ? (
-                    <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-100">
+                    <h2 className="text-base sm:text-lg font-bold text-slate-100 mb-4 pb-2 border-b border-slate-700/50">
                       {section.heading}
                     </h2>
                   ) : null}
@@ -200,11 +200,11 @@ export function LessonDetail({
             </div>
           ) : (
             <div className="py-10 text-center">
-              <p className="text-sm text-gray-400 font-medium">
+              <p className="text-sm text-slate-500 font-medium">
                 {t.no_content_in_lang} {selectedLang.label}.
               </p>
               {availableLanguages.length > 0 && !availableLanguages.includes(contentLang) && (
-                <p className="text-xs text-gray-400 mt-2">
+                <p className="text-xs text-slate-500 mt-2">
                   {t.available_in}{' '}
                   {availableLanguages
                     .map((l) => LANGUAGES.find((x) => x.code === l)?.label)
@@ -215,7 +215,7 @@ export function LessonDetail({
             </div>
           )}
 
-          <div className="pt-4 border-t border-gray-100">
+          <div className="pt-4 border-t border-slate-700/60">
             <button
               onClick={() => {
                 console.log('[StartTest]', {
@@ -226,7 +226,7 @@ export function LessonDetail({
                 });
                 onStartTest(content, effectiveLang);
               }}
-              className="w-full px-6 py-3.5 bg-blue-600 text-white rounded-xl font-semibold text-sm sm:text-base hover:bg-blue-700 active:scale-[0.99] transition-all shadow-sm"
+              className="w-full px-6 py-3.5 bg-blue-600 text-white rounded-xl font-semibold text-sm sm:text-base hover:bg-blue-500 active:scale-[0.99] transition-all shadow-sm"
             >
               {t.startTest}
             </button>
