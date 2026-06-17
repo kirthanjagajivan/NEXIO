@@ -124,6 +124,7 @@ export function TraineeDashboard({ onSignOut }: { onSignOut: () => void }) {
                   records={records}
                   chapters={chapters}
                   loading={loading}
+                  onGoToLessons={() => setActiveTab('teacher_learning')}
                 />
               )}
 

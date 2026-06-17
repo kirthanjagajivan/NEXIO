@@ -13,9 +13,9 @@ const DAILY_GOAL = 3;
 interface HomeTabProps {
   chapters: ChapterWithTopics[];
   records: LessonRecord[];
-  totalTopics: number;
-  onGoToLessons: () => void;
+  loading?: boolean;
   onSelectTopic: (topicId: string, topicTitle: string, chapterTitle: string) => void;
+  onGoToLessons?: () => void;
 }
 
 function ProgressBar({ pct, color = 'bg-blue-500', height = 'h-2.5' }: { pct: number; color?: string; height?: string }) {
@@ -29,8 +29,10 @@ function ProgressBar({ pct, color = 'bg-blue-500', height = 'h-2.5' }: { pct: nu
   );
 }
 
-export function HomeTab({ chapters, records, totalTopics, onGoToLessons, onSelectTopic }: HomeTabProps) {
+export function HomeTab({ chapters, records, onSelectTopic, onGoToLessons }: HomeTabProps) {
   const { t } = useLanguage();
+
+  const totalTopics = chapters.reduce((sum, ch) => sum + ch.topics.length, 0);
 
   const BADGES = [
     { id: 'first_lesson', icon: BookOpen, label: t.badge_first_lesson, desc: t.badge_first_lesson_desc, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200', condition: (passed: number) => passed >= 1 },
