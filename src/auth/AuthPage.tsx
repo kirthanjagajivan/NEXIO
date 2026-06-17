@@ -88,9 +88,9 @@ export function AuthPage() {
       <header className="w-full px-6 py-4 flex items-center justify-between border-b border-white/60 bg-white/70 backdrop-blur-sm">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
-            <span className="text-white text-sm font-bold">A</span>
+            <span className="text-white text-sm font-bold">N</span>
           </div>
-          <span className="font-semibold text-gray-900 text-sm">App</span>
+          <span className="font-semibold text-gray-900 text-sm">NEXIO</span>
         </div>
         <LanguageSelector />
       </header>
