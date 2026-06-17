@@ -5,6 +5,7 @@ import {
   ChevronDown, ChevronUp, Target,
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 interface TaskSubmission {
   id: string;
@@ -32,14 +33,6 @@ interface PracticalRecord {
   last_attempt_at: string;
 }
 
-const STATUS_CONFIG = {
-  pending:       { label: 'Pending',       icon: <Clock size={13} />,          cls: 'bg-gray-100 text-gray-600 border-gray-200' },
-  submitted:     { label: 'Under Review',  icon: <Clock size={13} />,          cls: 'bg-amber-50 text-amber-700 border-amber-200' },
-  approved:      { label: 'Approved',      icon: <CheckCircle size={13} />,    cls: 'bg-green-50 text-green-700 border-green-200' },
-  rejected:      { label: 'Rejected',      icon: <XCircle size={13} />,        cls: 'bg-red-50 text-red-700 border-red-200' },
-  needs_revision:{ label: 'Needs Revision',icon: <RotateCcw size={13} />,      cls: 'bg-blue-50 text-blue-700 border-blue-200' },
-};
-
 function formatDate(iso: string | null) {
   if (!iso) return '—';
   try { return new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }); }
@@ -60,6 +53,7 @@ function ScorePill({ score, total }: { score: number; total: number }) {
 }
 
 export function TrainerTaskAnalytics() {
+  const { t } = useLanguage();
   const [submissions, setSubmissions] = useState<TaskSubmission[]>([]);
   const [perfRecords, setPerfRecords] = useState<PracticalRecord[]>([]);
   const [loading, setLoading] = useState(true);
@@ -116,11 +110,19 @@ export function TrainerTaskAnalytics() {
     setLoading(false);
   }
 
+  const STATUS_CONFIG = {
+    pending:        { label: t.pending,               icon: <Clock size={13} />,          cls: 'bg-gray-100 text-gray-600 border-gray-200' },
+    submitted:      { label: t.stat_under_review,     icon: <Clock size={13} />,          cls: 'bg-amber-50 text-amber-700 border-amber-200' },
+    approved:       { label: t.status_approved,       icon: <CheckCircle size={13} />,    cls: 'bg-green-50 text-green-700 border-green-200' },
+    rejected:       { label: t.status_rejected,       icon: <XCircle size={13} />,        cls: 'bg-red-50 text-red-700 border-red-200' },
+    needs_revision: { label: t.status_needs_revision, icon: <RotateCcw size={13} />,      cls: 'bg-blue-50 text-blue-700 border-blue-200' },
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20 gap-3 text-gray-400">
         <Loader2 size={22} className="animate-spin" />
-        <span className="text-sm font-medium">Loading analytics…</span>
+        <span className="text-sm font-medium">{t.loading_lessons}</span>
       </div>
     );
   }
@@ -133,8 +135,8 @@ export function TrainerTaskAnalytics() {
             <Briefcase size={20} className="text-amber-600" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-gray-900">Trainer Task Analytics</h2>
-            <p className="text-sm text-gray-500">Submission history, scores, and trainer feedback</p>
+            <h2 className="text-xl font-bold text-gray-900">{t.task_analytics_title}</h2>
+            <p className="text-sm text-gray-500">{t.task_analytics_desc}</p>
           </div>
         </div>
         <div className="flex flex-col items-center justify-center py-16 gap-4 bg-white rounded-xl border border-gray-200">
@@ -142,15 +144,14 @@ export function TrainerTaskAnalytics() {
             <Briefcase size={28} className="text-gray-300" />
           </div>
           <div className="text-center">
-            <p className="font-semibold text-gray-700">No tasks submitted yet</p>
-            <p className="text-sm text-gray-400 mt-1">Complete trainer tasks to see your analytics here.</p>
+            <p className="font-semibold text-gray-700">{t.no_tasks_submitted}</p>
+            <p className="text-sm text-gray-400 mt-1">{t.no_tasks_submitted_desc}</p>
           </div>
         </div>
       </div>
     );
   }
 
-  // Stats
   const approved = submissions.filter((s) => s.status === 'approved').length;
   const rejected = submissions.filter((s) => s.status === 'rejected').length;
   const underReview = submissions.filter((s) => s.status === 'submitted').length;
@@ -164,7 +165,6 @@ export function TrainerTaskAnalytics() {
   const passedPerf = perfRecords.filter((p) => p.passed).length;
   const completionPct = perfRecords.length > 0 ? Math.round((passedPerf / perfRecords.length) * 100) : 0;
 
-  // Map submissions to perf records by task_id for history
   const perfByTask = new Map(perfRecords.map((p) => [p.task_id, p]));
 
   return (
@@ -176,8 +176,8 @@ export function TrainerTaskAnalytics() {
             <Briefcase size={20} className="text-amber-600" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-gray-900">Trainer Task Analytics</h2>
-            <p className="text-sm text-gray-500">Submission history, scores, and trainer feedback</p>
+            <h2 className="text-xl font-bold text-gray-900">{t.task_analytics_title}</h2>
+            <p className="text-sm text-gray-500">{t.task_analytics_desc}</p>
           </div>
         </div>
         <button
@@ -185,7 +185,7 @@ export function TrainerTaskAnalytics() {
           className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-gray-600 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors shrink-0"
         >
           <RefreshCw size={13} />
-          Refresh
+          {t.refresh_data}
         </button>
       </div>
 
@@ -195,7 +195,7 @@ export function TrainerTaskAnalytics() {
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <ClipboardCheck size={16} className="text-amber-500" />
-              <span className="font-semibold text-gray-800 text-sm">Practical Task Completion</span>
+              <span className="font-semibold text-gray-800 text-sm">{t.practical_task_completion}</span>
             </div>
             <span className="text-2xl font-bold text-amber-600">{completionPct}%</span>
           </div>
@@ -206,8 +206,8 @@ export function TrainerTaskAnalytics() {
             />
           </div>
           <p className="text-xs text-gray-400 mt-2">
-            <span className="font-semibold text-gray-600">{passedPerf}</span> of{' '}
-            <span className="font-semibold text-gray-600">{perfRecords.length}</span> tasks passed
+            <span className="font-semibold text-gray-600">{passedPerf}</span> {t.of}{' '}
+            <span className="font-semibold text-gray-600">{perfRecords.length}</span> {t.tasks_passed_of}
           </p>
         </div>
       )}
@@ -215,10 +215,10 @@ export function TrainerTaskAnalytics() {
       {/* Stat cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: 'Submitted', value: submissions.length, color: 'text-gray-900' },
-          { label: 'Approved', value: approved, color: 'text-green-600' },
-          { label: 'Under Review', value: underReview + needsRevision, color: 'text-amber-600' },
-          { label: 'Avg Score', value: avgScore !== null ? `${avgScore}/100` : '—', color: avgScore !== null && avgScore >= 60 ? 'text-blue-600' : 'text-gray-900' },
+          { label: t.stat_submitted, value: submissions.length, color: 'text-gray-900' },
+          { label: t.stat_approved, value: approved, color: 'text-green-600' },
+          { label: t.stat_under_review, value: underReview + needsRevision, color: 'text-amber-600' },
+          { label: t.stat_avg_score, value: avgScore !== null ? `${avgScore}/100` : '—', color: avgScore !== null && avgScore >= 60 ? 'text-blue-600' : 'text-gray-900' },
         ].map((c) => (
           <div key={c.label} className="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-1">
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">{c.label}</p>
@@ -231,14 +231,14 @@ export function TrainerTaskAnalytics() {
       <div className="bg-white rounded-xl border border-gray-200 p-5">
         <div className="flex items-center gap-2 mb-4">
           <Target size={16} className="text-gray-500" />
-          <h3 className="font-semibold text-gray-800 text-sm">Status Breakdown</h3>
+          <h3 className="font-semibold text-gray-800 text-sm">{t.status_breakdown}</h3>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { label: 'Approved', count: approved, cls: 'bg-green-50 border-green-200 text-green-700', icon: <CheckCircle size={14} /> },
-            { label: 'Rejected', count: rejected, cls: 'bg-red-50 border-red-200 text-red-700', icon: <XCircle size={14} /> },
-            { label: 'Under Review', count: underReview, cls: 'bg-amber-50 border-amber-200 text-amber-700', icon: <Clock size={14} /> },
-            { label: 'Needs Revision', count: needsRevision, cls: 'bg-blue-50 border-blue-200 text-blue-700', icon: <RotateCcw size={14} /> },
+            { label: t.status_approved,       count: approved,      cls: 'bg-green-50 border-green-200 text-green-700',  icon: <CheckCircle size={14} /> },
+            { label: t.status_rejected,       count: rejected,      cls: 'bg-red-50 border-red-200 text-red-700',        icon: <XCircle size={14} /> },
+            { label: t.status_under_review,   count: underReview,   cls: 'bg-amber-50 border-amber-200 text-amber-700',  icon: <Clock size={14} /> },
+            { label: t.status_needs_revision, count: needsRevision, cls: 'bg-blue-50 border-blue-200 text-blue-700',     icon: <RotateCcw size={14} /> },
           ].map((s) => (
             <div key={s.label} className={`rounded-lg border p-3 ${s.cls}`}>
               <div className="flex items-center gap-1.5 mb-1">{s.icon}<span className="text-xs font-semibold">{s.label}</span></div>
@@ -252,7 +252,7 @@ export function TrainerTaskAnalytics() {
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <div className="flex items-center gap-2 px-5 py-4 border-b border-gray-100 bg-gray-50">
           <ClipboardCheck size={15} className="text-gray-500" />
-          <h3 className="font-semibold text-gray-800 text-sm">Submission History</h3>
+          <h3 className="font-semibold text-gray-800 text-sm">{t.submission_history}</h3>
         </div>
         <div className="divide-y divide-gray-100">
           {submissions.map((sub) => {
@@ -275,8 +275,8 @@ export function TrainerTaskAnalytics() {
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-gray-900 text-sm truncate">{sub.task_title}</p>
                     <p className="text-xs text-gray-400 mt-0.5">
-                      Submitted {formatDate(sub.submitted_at ?? sub.created_at)}
-                      {sub.reviewed_at && ` · Reviewed ${formatDate(sub.reviewed_at)}`}
+                      {t.submitted_on} {formatDate(sub.submitted_at ?? sub.created_at)}
+                      {sub.reviewed_at && ` · ${t.reviewed_on} ${formatDate(sub.reviewed_at)}`}
                     </p>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
@@ -290,30 +290,28 @@ export function TrainerTaskAnalytics() {
 
                 {isOpen && (hasFeedback || hasScore || hasHistory) && (
                   <div className="px-5 pb-5 pt-1 bg-gray-50 border-t border-gray-100 space-y-3">
-                    {/* Trainer feedback */}
                     {hasFeedback && (
                       <div className="bg-white rounded-lg border border-gray-200 p-4">
                         <div className="flex items-center gap-2 mb-2">
                           <MessageSquare size={13} className="text-gray-500" />
-                          <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Trainer Feedback</span>
+                          <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">{t.trainer_feedback_label}</span>
                         </div>
                         <p className="text-sm text-gray-700 leading-relaxed">{sub.feedback}</p>
                         {sub.reviewed_at && (
-                          <p className="text-xs text-gray-400 mt-2">Reviewed on {formatDate(sub.reviewed_at)}</p>
+                          <p className="text-xs text-gray-400 mt-2">{t.reviewed_on} {formatDate(sub.reviewed_at)}</p>
                         )}
                       </div>
                     )}
 
-                    {/* Score detail from practical_performance */}
                     {perf && (
                       <div className="bg-white rounded-lg border border-gray-200 p-4">
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center gap-2">
                             <TrendingUp size={13} className="text-gray-500" />
-                            <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Score History</span>
+                            <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">{t.score_history}</span>
                           </div>
                           <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${perf.passed ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>
-                            {perf.passed ? 'Passed' : 'Failed'}
+                            {perf.passed ? t.pass_label : t.fail_label}
                           </span>
                         </div>
                         <div className="flex items-center gap-3 mb-3">
@@ -327,7 +325,7 @@ export function TrainerTaskAnalytics() {
                         </div>
                         {perf.score_history.length > 1 && (
                           <div className="flex items-center gap-1.5 flex-wrap">
-                            <span className="text-xs text-gray-400 shrink-0">Attempts:</span>
+                            <span className="text-xs text-gray-400 shrink-0">{t.attempts}:</span>
                             {perf.score_history.map((s, i) => {
                               const prev = i > 0 ? perf.score_history[i - 1] : null;
                               const up = prev !== null && s > prev;
@@ -352,21 +350,22 @@ export function TrainerTaskAnalytics() {
                             })}
                           </div>
                         )}
-                        <p className="text-xs text-gray-400 mt-2">{perf.attempts} attempt{perf.attempts !== 1 ? 's' : ''} · Last: {formatDate(perf.last_attempt_at)}</p>
+                        <p className="text-xs text-gray-400 mt-2">
+                          {perf.attempts} {t.attempts_label} · {formatDate(perf.last_attempt_at)}
+                        </p>
                       </div>
                     )}
 
-                    {/* No feedback yet */}
                     {!hasFeedback && sub.status === 'submitted' && (
                       <div className="flex items-center gap-2 text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
                         <AlertTriangle size={13} />
-                        Awaiting trainer review — feedback will appear here once reviewed.
+                        {t.awaiting_review_msg}
                       </div>
                     )}
                     {!hasFeedback && sub.status === 'needs_revision' && (
                       <div className="flex items-center gap-2 text-xs text-blue-600 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3">
                         <RotateCcw size={13} />
-                        Revision requested. Check your trainer's comments and resubmit.
+                        {t.revision_requested_msg}
                       </div>
                     )}
                   </div>
@@ -377,12 +376,12 @@ export function TrainerTaskAnalytics() {
         </div>
       </div>
 
-      {/* Performance records with full detail */}
+      {/* Performance records */}
       {perfRecords.length > 0 && (
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <div className="flex items-center gap-2 px-5 py-4 border-b border-gray-100 bg-gray-50">
             <Star size={15} className="text-amber-500" />
-            <h3 className="font-semibold text-gray-800 text-sm">Reviewed Task Scores</h3>
+            <h3 className="font-semibold text-gray-800 text-sm">{t.reviewed_task_scores}</h3>
           </div>
           <div className="divide-y divide-gray-100">
             {perfRecords.map((p) => (
@@ -394,7 +393,9 @@ export function TrainerTaskAnalytics() {
                     </div>
                     <div className="min-w-0">
                       <p className="font-semibold text-gray-900 text-sm truncate">{p.task_title}</p>
-                      <p className="text-xs text-gray-400">{p.attempts} attempt{p.attempts !== 1 ? 's' : ''} · {formatDate(p.last_attempt_at)}</p>
+                      <p className="text-xs text-gray-400">
+                        {p.attempts} {t.attempts_label} · {formatDate(p.last_attempt_at)}
+                      </p>
                     </div>
                   </div>
                   <ScorePill score={p.score} total={p.total} />
@@ -407,7 +408,7 @@ export function TrainerTaskAnalytics() {
                     />
                   </div>
                   <span className={`text-xs font-bold shrink-0 ${p.passed ? 'text-green-600' : 'text-red-500'}`}>
-                    {p.passed ? 'Pass' : 'Fail'}
+                    {p.passed ? t.pass_label : t.fail_label}
                   </span>
                 </div>
                 {p.feedback && (

@@ -85,9 +85,9 @@ export function TeacherDashboard({ onSignOut }: { onSignOut: () => void }) {
     { id: 'dashboard', label: t.dashboard, icon: <LayoutDashboard size={18} /> },
     { id: 'lessons', label: t.lessons, icon: <BookOpen size={18} /> },
     { id: 'chapters', label: t.chapters_stat, icon: <FileText size={18} /> },
-    { id: 'content', label: t.upload_content || 'Upload Content', icon: <Upload size={18} /> },
+    { id: 'content', label: t.upload_content, icon: <Upload size={18} /> },
     { id: 'performance', label: t.performance, icon: <TrendingUp size={18} /> },
-    { id: 'analytics', label: t.analytics || 'Analytics', icon: <BarChart3 size={18} /> },
+    { id: 'analytics', label: t.analytics, icon: <BarChart3 size={18} /> },
   ];
 
   return (
@@ -217,7 +217,7 @@ export function TeacherDashboard({ onSignOut }: { onSignOut: () => void }) {
             {activeTab === 'performance' && (
               <AcademicPerformanceTab
                 title={t.performance}
-                subtitle={t.academic_performance_desc || 'Monitor student academic progress and quiz scores'}
+                subtitle={t.academic_performance_desc}
               />
             )}
 
@@ -298,7 +298,7 @@ function TeacherDashboardOverview({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100 bg-gray-50">
-            <h3 className="font-semibold text-gray-800 text-sm">{t.quick_actions || 'Quick Actions'}</h3>
+            <h3 className="font-semibold text-gray-800 text-sm">{t.quick_actions}</h3>
           </div>
           <div className="p-6 space-y-3">
             <button
@@ -320,15 +320,15 @@ function TeacherDashboardOverview({
 
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100 bg-gray-50">
-            <h3 className="font-semibold text-gray-800 text-sm">{t.student_activity || 'Student Activity'}</h3>
+            <h3 className="font-semibold text-gray-800 text-sm">{t.student_activity}</h3>
           </div>
           <div className="p-6">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-sm text-gray-600">{t.active_today || 'Active Today'}</span>
+              <span className="text-sm text-gray-600">{t.active_today}</span>
               <span className="text-2xl font-bold text-emerald-600">{traineeStats.activeToday}</span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-500">{t.total_trainees || 'Total Trainees'}</span>
+              <span className="text-gray-500">{t.total_trainees}</span>
               <span className="font-medium text-gray-900">{traineeStats.total}</span>
             </div>
           </div>
@@ -378,8 +378,8 @@ function AnalyticsTab({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">{t.analytics || 'Analytics'}</h1>
-        <p className="text-gray-500 mt-1">{t.analytics_desc || 'View learning analytics and insights'}</p>
+        <h1 className="text-3xl font-bold text-gray-900">{t.analytics}</h1>
+        <p className="text-gray-500 mt-1">{t.analytics_desc}</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -402,7 +402,7 @@ function AnalyticsTab({
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <div className="flex items-center gap-2 mb-2">
             <TrendingUp size={18} className="text-gray-400" />
-            <span className="text-sm text-gray-600">{t.completion_rate || 'Content Coverage'}</span>
+            <span className="text-sm text-gray-600">{t.content_coverage}</span>
           </div>
           <p className="text-3xl font-bold text-emerald-600">{completionRate}%</p>
         </div>
@@ -411,7 +411,7 @@ function AnalyticsTab({
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-100 bg-gray-50">
           <h2 className="font-semibold text-gray-800 text-sm">
-            {t.most_attempted || 'Most Attempted Lessons'}
+            {t.most_attempted}
           </h2>
         </div>
 
@@ -442,7 +442,7 @@ function AnalyticsTab({
                     {Math.round((lesson.score / lesson.total) * 100)}%
                   </p>
                   <p className="text-xs text-gray-500">
-                    {lesson.passed ? t.passed : t.failed_label || 'Failed'}
+                    {lesson.passed ? t.passed : t.failed_label}
                   </p>
                 </div>
               </div>

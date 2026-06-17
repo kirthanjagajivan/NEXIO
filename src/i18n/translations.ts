@@ -147,6 +147,8 @@ export interface Translation {
   manage_topics_desc: string;
   upload_content: string;
   upload_content_desc: string;
+  analytics: string;
+  analytics_desc: string;
   sign_out: string;
 
   chapters_heading: string;
@@ -339,6 +341,42 @@ export interface Translation {
   review: string;
   published: string;
   draft: string;
+
+  // Trainer task analytics
+  task_analytics_title: string;
+  task_analytics_desc: string;
+  no_tasks_submitted: string;
+  no_tasks_submitted_desc: string;
+  practical_task_completion: string;
+  tasks_passed_of: string;
+  stat_submitted: string;
+  stat_approved: string;
+  stat_under_review: string;
+  stat_avg_score: string;
+  status_breakdown: string;
+  status_approved: string;
+  status_rejected: string;
+  status_under_review: string;
+  status_needs_revision: string;
+  submission_history: string;
+  submitted_on: string;
+  reviewed_on: string;
+  trainer_feedback_label: string;
+  score_history: string;
+  awaiting_review_msg: string;
+  revision_requested_msg: string;
+  reviewed_task_scores: string;
+  pass_label: string;
+  fail_label: string;
+
+  // Teacher dashboard
+  quick_actions: string;
+  student_activity: string;
+  active_today: string;
+  total_trainees: string;
+  content_coverage: string;
+  most_attempted: string;
+  assigned_count: string;
 }
 
 export const translations: Record<Language, Translation> = {
@@ -495,6 +533,8 @@ export const translations: Record<Language, Translation> = {
     manage_topics_desc: 'Add topics within chapters',
     upload_content: 'Upload Content',
     upload_content_desc: 'Write or upload lesson content',
+    analytics: 'Analytics',
+    analytics_desc: 'View learning analytics and insights',
     sign_out: 'Sign Out',
 
     chapters_heading: 'Chapters',
@@ -676,6 +716,38 @@ export const translations: Record<Language, Translation> = {
     review: 'Review',
     published: 'Published — visible to trainees',
     draft: 'Draft — hidden from trainees',
+    task_analytics_title: 'Trainer Task Analytics',
+    task_analytics_desc: 'Submission history, scores, and trainer feedback',
+    no_tasks_submitted: 'No tasks submitted yet',
+    no_tasks_submitted_desc: 'Complete trainer tasks to see your analytics here.',
+    practical_task_completion: 'Practical Task Completion',
+    tasks_passed_of: 'tasks passed',
+    stat_submitted: 'Submitted',
+    stat_approved: 'Approved',
+    stat_under_review: 'Under Review',
+    stat_avg_score: 'Avg Score',
+    status_breakdown: 'Status Breakdown',
+    status_approved: 'Approved',
+    status_rejected: 'Rejected',
+    status_under_review: 'Under Review',
+    status_needs_revision: 'Needs Revision',
+    submission_history: 'Submission History',
+    submitted_on: 'Submitted',
+    reviewed_on: 'Reviewed',
+    trainer_feedback_label: 'Trainer Feedback',
+    score_history: 'Score History',
+    awaiting_review_msg: 'Awaiting trainer review — feedback will appear here once reviewed.',
+    revision_requested_msg: "Revision requested. Check your trainer's comments and resubmit.",
+    reviewed_task_scores: 'Reviewed Task Scores',
+    pass_label: 'Pass',
+    fail_label: 'Fail',
+    quick_actions: 'Quick Actions',
+    student_activity: 'Student Activity',
+    active_today: 'Active Today',
+    total_trainees: 'Total Trainees',
+    content_coverage: 'Content Coverage',
+    most_attempted: 'Most Attempted Lessons',
+    assigned_count: 'assigned',
   },
 
   de: {
@@ -831,6 +903,8 @@ export const translations: Record<Language, Translation> = {
     manage_topics_desc: 'Themen innerhalb von Kapiteln hinzufügen',
     upload_content: 'Inhalt hochladen',
     upload_content_desc: 'Lektionsinhalt schreiben oder hochladen',
+    analytics: 'Analysen',
+    analytics_desc: 'Lernanalysen und Einblicke anzeigen',
     sign_out: 'Abmelden',
 
     chapters_heading: 'Kapitel',
@@ -1012,6 +1086,38 @@ export const translations: Record<Language, Translation> = {
     review: 'Prüfen',
     published: 'Veröffentlicht — für Auszubildende sichtbar',
     draft: 'Entwurf — für Auszubildende nicht sichtbar',
+    task_analytics_title: 'Aufgaben-Analysen',
+    task_analytics_desc: 'Einreichungsverlauf, Punkte und Trainer-Feedback',
+    no_tasks_submitted: 'Noch keine Aufgaben eingereicht',
+    no_tasks_submitted_desc: 'Bearbeite Trainer-Aufgaben, um deine Analysen zu sehen.',
+    practical_task_completion: 'Abschluss praktischer Aufgaben',
+    tasks_passed_of: 'Aufgaben bestanden',
+    stat_submitted: 'Eingereicht',
+    stat_approved: 'Genehmigt',
+    stat_under_review: 'In Bearbeitung',
+    stat_avg_score: 'Durchschnitt',
+    status_breakdown: 'Statusübersicht',
+    status_approved: 'Genehmigt',
+    status_rejected: 'Abgelehnt',
+    status_under_review: 'In Bearbeitung',
+    status_needs_revision: 'Überarbeitung nötig',
+    submission_history: 'Einreichungsverlauf',
+    submitted_on: 'Eingereicht',
+    reviewed_on: 'Bewertet',
+    trainer_feedback_label: 'Trainer-Feedback',
+    score_history: 'Punkteverlauf',
+    awaiting_review_msg: 'Warte auf Trainer-Bewertung — Feedback erscheint hier nach der Prüfung.',
+    revision_requested_msg: 'Überarbeitung angefordert. Prüfe die Kommentare deines Trainers und reiche erneut ein.',
+    reviewed_task_scores: 'Bewertete Aufgaben',
+    pass_label: 'Bestanden',
+    fail_label: 'Nicht bestanden',
+    quick_actions: 'Schnellaktionen',
+    student_activity: 'Schüleraktivität',
+    active_today: 'Heute aktiv',
+    total_trainees: 'Auszubildende gesamt',
+    content_coverage: 'Inhaltsabdeckung',
+    most_attempted: 'Meistversuche',
+    assigned_count: 'zugewiesen',
   },
 
   tr: {
@@ -1167,6 +1273,8 @@ export const translations: Record<Language, Translation> = {
     manage_topics_desc: 'Bölümler içinde konular ekleyin',
     upload_content: 'İçerik Yükle',
     upload_content_desc: 'Ders içeriği yazın veya yükleyin',
+    analytics: 'Analizler',
+    analytics_desc: 'Öğrenme analizlerini ve içgörüleri görüntüle',
     sign_out: 'Çıkış Yap',
 
     chapters_heading: 'Bölümler',
@@ -1348,6 +1456,38 @@ export const translations: Record<Language, Translation> = {
     review: 'İncele',
     published: 'Yayınlandı — stajyerler görebilir',
     draft: 'Taslak — stajyerlerden gizli',
+    task_analytics_title: 'Görev Analitiği',
+    task_analytics_desc: 'Gönderim geçmişi, puanlar ve eğitmen geri bildirimi',
+    no_tasks_submitted: 'Henüz görev gönderilmedi',
+    no_tasks_submitted_desc: 'Analizleri görmek için eğitmen görevlerini tamamla.',
+    practical_task_completion: 'Pratik Görev Tamamlama',
+    tasks_passed_of: 'görev geçildi',
+    stat_submitted: 'Gönderildi',
+    stat_approved: 'Onaylandı',
+    stat_under_review: 'İnceleniyor',
+    stat_avg_score: 'Ort. Puan',
+    status_breakdown: 'Durum Dağılımı',
+    status_approved: 'Onaylandı',
+    status_rejected: 'Reddedildi',
+    status_under_review: 'İnceleniyor',
+    status_needs_revision: 'Revizyon Gerekli',
+    submission_history: 'Gönderim Geçmişi',
+    submitted_on: 'Gönderildi',
+    reviewed_on: 'İncelendi',
+    trainer_feedback_label: 'Eğitmen Geri Bildirimi',
+    score_history: 'Puan Geçmişi',
+    awaiting_review_msg: 'Eğitmen incelemesi bekleniyor — geri bildirim inceleme sonrası görünecek.',
+    revision_requested_msg: 'Revizyon istendi. Eğitmenin yorumlarını kontrol et ve yeniden gönder.',
+    reviewed_task_scores: 'İncelenen Görev Puanları',
+    pass_label: 'Geçti',
+    fail_label: 'Kaldı',
+    quick_actions: 'Hızlı İşlemler',
+    student_activity: 'Öğrenci Aktivitesi',
+    active_today: 'Bugün Aktif',
+    total_trainees: 'Toplam Stajyer',
+    content_coverage: 'İçerik Kapsamı',
+    most_attempted: 'En Çok Denenen',
+    assigned_count: 'atandı',
   },
 
   ar: {
@@ -1503,6 +1643,8 @@ export const translations: Record<Language, Translation> = {
     manage_topics_desc: 'إضافة مواضيع داخل الفصول',
     upload_content: 'رفع المحتوى',
     upload_content_desc: 'كتابة أو رفع محتوى الدرس',
+    analytics: 'التحليلات',
+    analytics_desc: 'عرض تحليلات التعلم والرؤى',
     sign_out: 'تسجيل الخروج',
 
     chapters_heading: 'الفصول',
@@ -1684,6 +1826,38 @@ export const translations: Record<Language, Translation> = {
     review: 'مراجعة',
     published: 'منشور — مرئي للمتدربين',
     draft: 'مسودة — مخفي عن المتدربين',
+    task_analytics_title: 'تحليلات المهام',
+    task_analytics_desc: 'سجل التسليمات والدرجات وتغذية المدرب الراجعة',
+    no_tasks_submitted: 'لم يتم تسليم أي مهام بعد',
+    no_tasks_submitted_desc: 'أكمل مهام المدرب لرؤية التحليلات.',
+    practical_task_completion: 'إتمام المهام العملية',
+    tasks_passed_of: 'مهام اجتزت',
+    stat_submitted: 'مُسلَّم',
+    stat_approved: 'مقبول',
+    stat_under_review: 'قيد المراجعة',
+    stat_avg_score: 'متوسط الدرجة',
+    status_breakdown: 'توزيع الحالات',
+    status_approved: 'مقبول',
+    status_rejected: 'مرفوض',
+    status_under_review: 'قيد المراجعة',
+    status_needs_revision: 'يحتاج مراجعة',
+    submission_history: 'سجل التسليمات',
+    submitted_on: 'تم التسليم',
+    reviewed_on: 'تمت المراجعة',
+    trainer_feedback_label: 'تغذية المدرب الراجعة',
+    score_history: 'سجل الدرجات',
+    awaiting_review_msg: 'في انتظار مراجعة المدرب — ستظهر التغذية الراجعة بعد المراجعة.',
+    revision_requested_msg: 'طُلبت مراجعة. تحقق من تعليقات مدربك وأعد التسليم.',
+    reviewed_task_scores: 'درجات المهام المراجَعة',
+    pass_label: 'ناجح',
+    fail_label: 'راسب',
+    quick_actions: 'إجراءات سريعة',
+    student_activity: 'نشاط الطلاب',
+    active_today: 'نشط اليوم',
+    total_trainees: 'إجمالي المتدربين',
+    content_coverage: 'تغطية المحتوى',
+    most_attempted: 'الأكثر محاولةً',
+    assigned_count: 'مُعيَّن',
   },
 
   ru: {
@@ -1839,6 +2013,8 @@ export const translations: Record<Language, Translation> = {
     manage_topics_desc: 'Добавление тем в главы',
     upload_content: 'Загрузить контент',
     upload_content_desc: 'Написать или загрузить учебный контент',
+    analytics: 'Аналитика',
+    analytics_desc: 'Просмотр аналитики обучения и инсайтов',
     sign_out: 'Выйти',
 
     chapters_heading: 'Главы',
@@ -2020,6 +2196,38 @@ export const translations: Record<Language, Translation> = {
     review: 'Проверить',
     published: 'Опубликовано — видно стажёрам',
     draft: 'Черновик — скрыто от стажёров',
+    task_analytics_title: 'Аналитика заданий',
+    task_analytics_desc: 'История отправок, оценки и обратная связь тренера',
+    no_tasks_submitted: 'Заданий ещё не отправлено',
+    no_tasks_submitted_desc: 'Выполни задания тренера, чтобы увидеть аналитику.',
+    practical_task_completion: 'Выполнение практических заданий',
+    tasks_passed_of: 'заданий пройдено',
+    stat_submitted: 'Отправлено',
+    stat_approved: 'Одобрено',
+    stat_under_review: 'На проверке',
+    stat_avg_score: 'Средний балл',
+    status_breakdown: 'Распределение по статусам',
+    status_approved: 'Одобрено',
+    status_rejected: 'Отклонено',
+    status_under_review: 'На проверке',
+    status_needs_revision: 'Требует доработки',
+    submission_history: 'История отправок',
+    submitted_on: 'Отправлено',
+    reviewed_on: 'Проверено',
+    trainer_feedback_label: 'Обратная связь тренера',
+    score_history: 'История оценок',
+    awaiting_review_msg: 'Ожидание проверки тренером — отзыв появится после проверки.',
+    revision_requested_msg: 'Запрошена доработка. Ознакомься с комментариями тренера и отправь повторно.',
+    reviewed_task_scores: 'Оценки проверенных заданий',
+    pass_label: 'Зачёт',
+    fail_label: 'Не зачёт',
+    quick_actions: 'Быстрые действия',
+    student_activity: 'Активность учеников',
+    active_today: 'Активны сегодня',
+    total_trainees: 'Всего стажёров',
+    content_coverage: 'Охват содержания',
+    most_attempted: 'Чаще всего проходят',
+    assigned_count: 'назначен',
   },
 };
 
