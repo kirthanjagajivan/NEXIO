@@ -121,7 +121,7 @@ export function LessonDetail({
         <span>{t.back}</span>
       </button>
 
-      <div className="bg-[#1E293B] rounded-2xl border border-slate-700/60 shadow-sm overflow-hidden">
+      <div className="bg-[#1E293B] rounded-2xl border border-slate-700/50 shadow-xl overflow-hidden">
         <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-5 sm:px-8 py-7 sm:py-10">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1 min-w-0">
@@ -172,17 +172,20 @@ export function LessonDetail({
           </div>
         </div>
 
-        <div className="px-5 sm:px-8 py-6 sm:py-8 space-y-8">
+        <div className="px-5 sm:px-10 py-8 sm:py-10">
           {content ? (
-            <div dir={isContentRTL ? 'rtl' : 'ltr'}>
+            <div dir={isContentRTL ? 'rtl' : 'ltr'} className="space-y-10">
               {sections.map((section, si) => (
-                <div key={si} className={si > 0 ? 'mt-8' : ''}>
+                <div key={si}>
                   {section.heading ? (
-                    <h2 className="text-base sm:text-lg font-bold text-slate-100 mb-4 pb-2 border-b border-slate-700/50">
-                      {section.heading}
-                    </h2>
+                    <div className="flex items-center gap-3 mb-5">
+                      <div className="w-1 h-6 rounded-full bg-blue-500 shrink-0" />
+                      <h2 className="text-lg sm:text-xl font-bold text-white leading-snug">
+                        {section.heading}
+                      </h2>
+                    </div>
                   ) : null}
-                  <div className="space-y-4">
+                  <div className="space-y-5">
                     {section.paragraphs.map((para, pi) => (
                       <TermHighlighter
                         key={pi}
@@ -199,8 +202,11 @@ export function LessonDetail({
               ))}
             </div>
           ) : (
-            <div className="py-10 text-center">
-              <p className="text-sm text-slate-500 font-medium">
+            <div className="py-14 text-center">
+              <div className="w-12 h-12 rounded-full bg-slate-700/60 flex items-center justify-center mx-auto mb-4">
+                <span className="text-slate-400 text-xl">–</span>
+              </div>
+              <p className="text-sm text-slate-300 font-medium">
                 {t.no_content_in_lang} {selectedLang.label}.
               </p>
               {availableLanguages.length > 0 && !availableLanguages.includes(contentLang) && (
@@ -215,18 +221,15 @@ export function LessonDetail({
             </div>
           )}
 
-          <div className="pt-4 border-t border-slate-700/60">
+          <div className="mt-10 pt-6 border-t border-slate-700/50">
+            <p className="text-xs text-slate-500 text-center mb-3">
+              {content ? `${sections.length} section${sections.length !== 1 ? 's' : ''} · ${sections.reduce((n, s) => n + s.paragraphs.length, 0)} paragraphs` : ''}
+            </p>
             <button
               onClick={() => {
-                console.log('[StartTest]', {
-                  contentLang,
-                  effectiveLang,
-                  contentLength: content.length,
-                  topicTitle,
-                });
                 onStartTest(content, effectiveLang);
               }}
-              className="w-full px-6 py-3.5 bg-blue-600 text-white rounded-xl font-semibold text-sm sm:text-base hover:bg-blue-500 active:scale-[0.99] transition-all shadow-sm"
+              className="w-full px-6 py-4 bg-blue-600 text-white rounded-xl font-semibold text-sm sm:text-base hover:bg-blue-500 active:scale-[0.99] transition-all shadow-lg shadow-blue-900/30"
             >
               {t.startTest}
             </button>

@@ -468,7 +468,7 @@ export function TermHighlighter({
   return (
     <>
       <p
-        className={`text-gray-700 text-[15px] sm:text-base leading-[1.75] tracking-[0.01em] ${className}`}
+        className={`text-slate-100 text-[15px] sm:text-[16px] leading-[1.85] tracking-[0.012em] ${className}`}
         style={{ textAlign: rtl ? 'right' : 'left' }}
         dir={rtl ? 'rtl' : 'ltr'}
       >
@@ -478,7 +478,7 @@ export function TermHighlighter({
               key={i}
               onClick={(e) => handleClick(seg.text, e)}
               title="Click for explanation"
-              className="relative cursor-pointer font-medium text-blue-700 underline decoration-dotted decoration-blue-400 underline-offset-2 hover:text-blue-800 hover:bg-blue-50 rounded px-0.5 transition-colors"
+              className="relative cursor-pointer font-semibold text-blue-300 underline decoration-dotted decoration-blue-400 underline-offset-2 hover:text-blue-200 hover:bg-blue-500/15 rounded px-0.5 transition-colors"
             >
               {seg.text}
             </span>
